@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotton Street — Orders</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ee;
+    --accent: #c8a96e;
+    --accent2: #e63946;
+    --grey: #1a1a1a;
+    --mid: #2a2a2a;
+    --light: #888;
+    --green: #25D366;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; }
+
+  nav {
+    background: var(--grey);
+    border-bottom: 1px solid rgba(200,169,110,0.15);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 3px; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-link {
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--light);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--accent); border-color: rgba(200,169,110,0.3); }
+  .logout-btn {
+    background: none;
+    border: 1px solid rgba(230,57,70,0.3);
+    color: var(--accent2);
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { background: rgba(230,57,70,0.1); }
+
+  .page { padding: 28px 32px; max-width: 1100px; margin: 0 auto; }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--grey);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 20px 24px;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 8px;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--light);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--accent);
+    color: var(--black);
+    border-color: var(--accent);
+  }
+
+  /* ORDER CARDS */
+  .orders-list { display: flex; flex-direction: column; gap: 12px; }
+  .order-card {
+    background: var(--grey);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 20px 24px;
+    transition: border-color 0.2s;
+  }
+  .order-card:hover { border-color: rgba(200,169,110,0.3); }
+  .order-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    gap: 16px;
+  }
+  .order-id {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--light);
+  }
+  .order-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--light);
+    white-space: nowrap;
+  }
+  .order-customer { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+  .order-contact { font-size: 13px; color: var(--light); }
+  .order-items {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--light);
+  }
+  .order-items strong { color: var(--white); }
+  .order-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .order-total {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .order-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  .status-badge {
+    padding: 5px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .status-pending { background: rgba(200,169,110,0.15); color: var(--accent); border: 1px solid rgba(200,169,110,0.3); }
+  .status-confirmed { background: rgba(37,211,102,0.15); color: #25D366; border: 1px solid rgba(37,211,102,0.3); }
+  .status-delivered { background: rgba(37,211,102,0.25); color: #25D366; border: 1px solid rgba(37,211,102,0.5); }
+  .status-cancelled { background: rgba(230,57,70,0.1); color: var(--accent2); border: 1px solid rgba(230,57,70,0.2); }
+
+  .status-select {
+    background: var(--mid);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 7px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    outline: none;
+    cursor: pointer;
+  }
+  .status-select option { background: var(--grey); }
+
+  .btn-wa {
+    background: rgba(37,211,102,0.15);
+    border: 1px solid rgba(37,211,102,0.3);
+    color: #25D366;
+    padding: 7px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-wa:hover { background: rgba(37,211,102,0.25); }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--light);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--accent);
+    color: var(--black);
+    padding: 12px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    z-index: 9000;
+    transition: transform 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px) {
+    .page { padding: 16px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    nav { padding: 12px 16px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Cotton<span>Street</span> <span style="font-size:13px;color:var(--light);letter-spacing:1px;">ADMIN</span></div>
+  <div class="nav-links">
+    <a href="products.html" class="nav-link">Products</a>
+    <a href="orders.html" class="nav-link active">Orders</a>
+  </div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</nav>
+
+<div class="page">
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Total Orders</div>
+      <div class="stat-num" id="statTotal">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending</div>
+      <div class="stat-num" id="statPending">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Confirmed</div>
+      <div class="stat-num" id="statConfirmed">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Delivered</div>
+      <div class="stat-num" id="statDelivered">0</div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterOrders('all', this)">All</button>
+    <button class="filter-btn" onclick="filterOrders('pending', this)">Pending</button>
+    <button class="filter-btn" onclick="filterOrders('confirmed', this)">Confirmed</button>
+    <button class="filter-btn" onclick="filterOrders('delivered', this)">Delivered</button>
+    <button class="filter-btn" onclick="filterOrders('cancelled', this)">Cancelled</button>
+  </div>
+
+  <!-- ORDERS LIST -->
+  <div class="orders-list" id="ordersList">
+    <div class="empty-state">Loading orders…</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = (() => {
+  const host = window.location.hostname;
+  if (host.endsWith('.app.github.dev')) {
+    return `${window.location.protocol}//${host.replace(/-\d+\.app\.github\.dev$/, '-8000.app.github.dev')}/api`;
+  }
+  return 'http://localhost:8000/api';
+})();
+
+const token = localStorage.getItem('cs_token');
+if (!token) window.location.href = 'login.html';
+const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
+let allOrders = [];
+let currentFilter = 'all';
+
+async function init() {
+  await loadOrders();
+}
+
+async function loadOrders() {
+  try {
+    const res = await fetch(`${API}/orders`, { headers });
+    if (res.status === 401) { logout(); return; }
+    allOrders = await res.json();
+    updateStats();
+    renderOrders(allOrders);
+  } catch (e) {
+    document.getElementById('ordersList').innerHTML = '<div class="empty-state">Failed to load orders</div>';
+  }
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = allOrders.length;
+  document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
+  document.getElementById('statConfirmed').textContent = allOrders.filter(o => o.status === 'confirmed').length;
+  document.getElementById('statDelivered').textContent = allOrders.filter(o => o.status === 'delivered').length;
+}
+
+function filterOrders(status, btn) {
+  currentFilter = status;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = status === 'all' ? allOrders : allOrders.filter(o => o.status === status);
+  renderOrders(filtered);
+}
+
+function renderOrders(list) {
+  const container = document.getElementById('ordersList');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-state">No orders found</div>';
+    return;
+  }
+  container.innerHTML = list.map(o => {
+    const date = new Date(o.created_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const items = Array.isArray(o.items_json)
+      ? o.items_json.map(i => i.name ? `<strong>${i.qty || 1}× ${i.name}</strong>${i.variant ? ` — ${i.variant}` : ''}` : `<strong>${i.note || JSON.stringify(i)}</strong>`).join('<br>')
+      : JSON.stringify(o.items_json);
+    const waMsg = encodeURIComponent(`Hi ${o.customer_name}, your Cotton Street order has been confirmed! 🔥\n\nWe'll be in touch shortly to arrange delivery.\n\nThank you for shopping with us! 🛍️`);
+    return `
+    <div class="order-card">
+      <div class="order-top">
+        <div>
+          <div class="order-id">Order #${o.id}</div>
+          <div class="order-customer">${o.customer_name}</div>
+          <div class="order-contact">📞 ${o.customer_phone} · 📍 ${o.customer_town}</div>
+        </div>
+        <div class="order-date">${date}</div>
+      </div>
+      <div class="order-items">${items}${o.notes ? `<br><em>Note: ${o.notes}</em>` : ''}</div>
+      <div class="order-bottom">
+        <div class="order-total">${o.total ? `P${Number(o.total).toLocaleString()}` : 'No total'}</div>
+        <div class="order-actions">
+          <span class="status-badge status-${o.status}">${o.status}</span>
+          <select class="status-select" onchange="updateStatus(${o.id}, this.value)">
+            <option value="">Update status…</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <a class="btn-wa" href="https://wa.me/${o.customer_phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function updateStatus(id, status) {
+  if (!status) return;
+  try {
+    const res = await fetch(`${API}/orders/${id}/status`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ status })
+    });
+    if (!res.ok) throw new Error('Update failed');
+    showToast(`Order #${id} marked as ${status}`);
+    await loadOrders();
+  } catch (e) { showToast('Failed to update status'); }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function logout() {
+  localStorage.removeItem('cs_token');
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>

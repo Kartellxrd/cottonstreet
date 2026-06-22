@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotton Street — Manage Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ee;
+    --accent: #c8a96e;
+    --accent2: #e63946;
+    --grey: #1a1a1a;
+    --mid: #2a2a2a;
+    --light: #888;
+    --green: #25D366;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; }
+
+  /* NAV */
+  nav {
+    background: var(--grey);
+    border-bottom: 1px solid rgba(200,169,110,0.15);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 3px; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-link {
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--light);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--accent); border-color: rgba(200,169,110,0.3); }
+  .logout-btn {
+    background: none;
+    border: 1px solid rgba(230,57,70,0.3);
+    color: var(--accent2);
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { background: rgba(230,57,70,0.1); }
+
+  /* LAYOUT */
+  .page { display: grid; grid-template-columns: 380px 1fr; gap: 0; min-height: calc(100vh - 57px); }
+
+  /* FORM PANEL */
+  .form-panel {
+    background: var(--grey);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 28px 24px;
+    overflow-y: auto;
+  }
+  .panel-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--grey); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* IMAGE UPLOAD */
+  .img-upload-area {
+    border: 2px dashed rgba(200,169,110,0.3);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .img-upload-area:hover { border-color: var(--accent); }
+  .img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-text { font-size: 12px; color: var(--light); }
+  .upload-text strong { color: var(--accent); display: block; }
+  .img-preview {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    margin-top: 12px;
+    display: none;
+    border: 1px solid rgba(200,169,110,0.2);
+  }
+  .upload-progress {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 8px;
+    display: none;
+  }
+
+  .btn-save {
+    width: 100%;
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    padding: 15px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+  .btn-save:hover { background: var(--white); }
+  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-clear {
+    width: 100%;
+    background: transparent;
+    color: var(--light);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-clear:hover { border-color: var(--accent); color: var(--accent); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--accent);
+    color: var(--black);
+    padding: 12px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    z-index: 9000;
+    transition: transform 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--accent2); color: white; }
+
+  /* PRODUCTS LIST */
+  .list-panel { padding: 28px 24px; overflow-y: auto; }
+  .list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .list-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+  .product-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--light);
+  }
+  .search-input {
+    width: 100%;
+    background: var(--grey);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+
+  .product-list { display: flex; flex-direction: column; gap: 10px; }
+  .product-row {
+    background: var(--grey);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    transition: border-color 0.2s;
+  }
+  .product-row:hover { border-color: rgba(200,169,110,0.3); }
+  .product-row.editing { border-color: var(--accent); }
+  .product-thumb {
+    width: 52px; height: 64px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--mid);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 16px;
+    color: rgba(255,255,255,0.2);
+  }
+  .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .product-info { flex: 1; min-width: 0; }
+  .product-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .product-meta { font-size: 12px; color: var(--light); margin-top: 2px; }
+  .product-price { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); margin-top: 4px; }
+  .product-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-edit {
+    background: rgba(200,169,110,0.15);
+    border: 1px solid rgba(200,169,110,0.3);
+    color: var(--accent);
+    padding: 7px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-edit:hover { background: rgba(200,169,110,0.25); }
+  .btn-delete {
+    background: rgba(230,57,70,0.1);
+    border: 1px solid rgba(230,57,70,0.2);
+    color: var(--accent2);
+    padding: 7px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-delete:hover { background: rgba(230,57,70,0.2); }
+  .stock-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    transition: transform 0.2s;
+  }
+  .stock-toggle:hover { transform: scale(1.2); }
+  .empty-list {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--light);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; }
+    nav { padding: 12px 16px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Cotton<span>Street</span> <span style="font-size:13px;color:var(--light);letter-spacing:1px;">ADMIN</span></div>
+  <div class="nav-links">
+    <a href="products.html" class="nav-link active">Products</a>
+    <a href="orders.html" class="nav-link">Orders</a>
+  </div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</nav>
+
+<div class="page">
+  <!-- ADD/EDIT FORM -->
+  <div class="form-panel">
+    <div class="panel-title" id="formTitle">ADD PRODUCT</div>
+    <input type="hidden" id="editId">
+
+    <div class="form-group">
+      <label>Product Name *</label>
+      <input type="text" id="pName" placeholder="e.g. Nike Air Max 95">
+    </div>
+    <div class="form-group">
+      <label>Variant / Description</label>
+      <input type="text" id="pVariant" placeholder="e.g. Black · All Sizes on Order">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price (BWP) *</label>
+        <input type="number" id="pPrice" placeholder="950">
+      </div>
+      <div class="form-group">
+        <label>Old Price (optional)</label>
+        <input type="number" id="pOldPrice" placeholder="1200">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="pCategory">
+          <option value="">Select...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Badge</label>
+        <select id="pBadge">
+          <option value="">None</option>
+          <option value="HOT">HOT</option>
+          <option value="NEW">NEW</option>
+          <option value="SALE">SALE</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Product Photo</label>
+      <div class="img-upload-area" id="uploadArea">
+        <input type="file" id="imgFile" accept="image/*" onchange="handleImageSelect(this)">
+        <div class="upload-icon">📸</div>
+        <div class="upload-text">
+          <strong>Click to choose photo</strong>
+          from your device
+        </div>
+      </div>
+      <img class="img-preview" id="imgPreview" alt="Preview">
+      <div class="upload-progress" id="uploadProgress">Uploading to Cloudinary…</div>
+    </div>
+
+    <button class="btn-save" id="saveBtn" onclick="saveProduct()">SAVE PRODUCT</button>
+    <button class="btn-clear" onclick="clearForm()">CLEAR FORM</button>
+  </div>
+
+  <!-- PRODUCTS LIST -->
+  <div class="list-panel">
+    <div class="list-header">
+      <div class="list-title">ALL PRODUCTS</div>
+      <div class="product-count" id="productCount">Loading…</div>
+    </div>
+    <input type="text" class="search-input" placeholder="Search products…" oninput="searchProducts(this.value)">
+    <div class="product-list" id="productList">
+      <div class="empty-list">Loading products…</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== CONFIG ===== */
+const API = (() => {
+  const host = window.location.hostname;
+  if (host.endsWith('.app.github.dev')) {
+    return `${window.location.protocol}//${host.replace(/-\d+\.app\.github\.dev$/, '-8000.app.github.dev')}/api`;
+  }
+  return 'http://localhost:8000/api';
+})();
+
+const token = localStorage.getItem('cs_token');
+if (!token) window.location.href = 'login.html';
+
+const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
+let allProducts = [];
+let categories = [];
+let uploadedImageUrl = '';
+let uploadedPublicId = '';
+
+/* ===== INIT ===== */
+async function init() {
+  await loadCategories();
+  await loadProducts();
+}
+
+async function loadCategories() {
+  try {
+    const res = await fetch(`${API}/categories`);
+    categories = await res.json();
+    const sel = document.getElementById('pCategory');
+    categories.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      sel.appendChild(opt);
+    });
+  } catch (e) { showToast('Failed to load categories', true); }
+}
+
+async function loadProducts() {
+  try {
+    const res = await fetch(`${API}/products`);
+    allProducts = await res.json();
+    renderProducts(allProducts);
+  } catch (e) { showToast('Failed to load products', true); }
+}
+
+/* ===== RENDER ===== */
+function renderProducts(list) {
+  document.getElementById('productCount').textContent = `${list.length} products`;
+  const container = document.getElementById('productList');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-list">No products found</div>';
+    return;
+  }
+  container.innerHTML = list.map(p => {
+    const thumb = p.image_url
+      ? `<div class="product-thumb"><img src="${p.image_url}" alt="${p.name}"></div>`
+      : `<div class="product-thumb">${p.name.slice(0,2).toUpperCase()}</div>`;
+    const catName = categories.find(c => c.id === p.category_id)?.name || '—';
+    return `
+    <div class="product-row" id="row-${p.id}">
+      ${thumb}
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-meta">${catName} · ${p.variant || '—'}</div>
+        <div class="product-price">P${Number(p.price).toLocaleString()}${p.old_price ? ` <span style="text-decoration:line-through;color:var(--light);font-size:11px;">P${Number(p.old_price).toLocaleString()}</span>` : ''}</div>
+      </div>
+      <div class="product-actions">
+        <button class="stock-toggle" onclick="toggleStock(${p.id}, ${p.in_stock})" title="${p.in_stock ? 'In Stock' : 'Out of Stock'}">${p.in_stock ? '✅' : '❌'}</button>
+        <button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
+        <button class="btn-delete" onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g, "\\'")}')">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function searchProducts(q) {
+  const filtered = allProducts.filter(p =>
+    p.name.toLowerCase().includes(q.toLowerCase()) ||
+    (p.variant || '').toLowerCase().includes(q.toLowerCase())
+  );
+  renderProducts(filtered);
+}
+
+/* ===== IMAGE UPLOAD ===== */
+async function handleImageSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Show local preview immediately
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('imgPreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+  // Upload to Cloudinary via backend
+  const progress = document.getElementById('uploadProgress');
+  progress.style.display = 'block';
+  progress.textContent = 'Uploading photo…';
+
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API}/upload/image`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    if (!res.ok) throw new Error('Upload failed');
+    const data = await res.json();
+    uploadedImageUrl = data.url;
+    uploadedPublicId = data.public_id;
+    progress.textContent = '✅ Photo uploaded!';
+    setTimeout(() => progress.style.display = 'none', 2000);
+  } catch (e) {
+    progress.textContent = '❌ Upload failed. Try again.';
+    showToast('Image upload failed', true);
+  }
+}
+
+/* ===== SAVE PRODUCT ===== */
+async function saveProduct() {
+  const name = document.getElementById('pName').value.trim();
+  const variant = document.getElementById('pVariant').value.trim();
+  const price = document.getElementById('pPrice').value;
+  const oldPrice = document.getElementById('pOldPrice').value;
+  const categoryId = document.getElementById('pCategory').value;
+  const badge = document.getElementById('pBadge').value;
+  const editId = document.getElementById('editId').value;
+
+  if (!name || !price || !categoryId) {
+    showToast('Name, price and category are required', true);
+    return;
+  }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'SAVING…';
+
+  const payload = {
+    name,
+    variant: variant || null,
+    price: parseFloat(price),
+    old_price: oldPrice ? parseFloat(oldPrice) : null,
+    category_id: parseInt(categoryId),
+    badge: badge || null,
+    image_url: uploadedImageUrl || null,
+    cloudinary_id: uploadedPublicId || null,
+    in_stock: true
+  };
+
+  try {
+    let res;
+    if (editId) {
+      res = await fetch(`${API}/products/${editId}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(payload)
+      });
+    } else {
+      res = await fetch(`${API}/products`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      });
+    }
+    if (!res.ok) throw new Error('Save failed');
+    showToast(editId ? 'Product updated!' : 'Product added!');
+    clearForm();
+    await loadProducts();
+  } catch (e) {
+    showToast('Failed to save product', true);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'SAVE PRODUCT';
+}
+
+/* ===== EDIT ===== */
+function editProduct(id) {
+  const p = allProducts.find(p => p.id === id);
+  if (!p) return;
+  document.getElementById('editId').value = p.id;
+  document.getElementById('formTitle').textContent = 'EDIT PRODUCT';
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pVariant').value = p.variant || '';
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pOldPrice').value = p.old_price || '';
+  document.getElementById('pCategory').value = p.category_id || '';
+  document.getElementById('pBadge').value = p.badge || '';
+  if (p.image_url) {
+    const preview = document.getElementById('imgPreview');
+    preview.src = p.image_url;
+    preview.style.display = 'block';
+    uploadedImageUrl = p.image_url;
+    uploadedPublicId = p.cloudinary_id || '';
+  }
+  document.getElementById('saveBtn').textContent = 'UPDATE PRODUCT';
+  document.querySelectorAll('.product-row').forEach(r => r.classList.remove('editing'));
+  document.getElementById(`row-${id}`)?.classList.add('editing');
+  document.querySelector('.form-panel').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ===== DELETE ===== */
+async function deleteProduct(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try {
+    const res = await fetch(`${API}/products/${id}`, { method: 'DELETE', headers });
+    if (!res.ok) throw new Error('Delete failed');
+    showToast('Product deleted');
+    await loadProducts();
+  } catch (e) { showToast('Failed to delete product', true); }
+}
+
+/* ===== TOGGLE STOCK ===== */
+async function toggleStock(id, currentStatus) {
+  try {
+    await fetch(`${API}/products/${id}/stock`, { method: 'PATCH', headers });
+    showToast(currentStatus ? 'Marked as out of stock' : 'Marked as in stock');
+    await loadProducts();
+  } catch (e) { showToast('Failed to update stock', true); }
+}
+
+/* ===== CLEAR FORM ===== */
+function clearForm() {
+  document.getElementById('editId').value = '';
+  document.getElementById('formTitle').textContent = 'ADD PRODUCT';
+  document.getElementById('pName').value = '';
+  document.getElementById('pVariant').value = '';
+  document.getElementById('pPrice').value = '';
+  document.getElementById('pOldPrice').value = '';
+  document.getElementById('pCategory').value = '';
+  document.getElementById('pBadge').value = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('imgFile').value = '';
+  document.getElementById('saveBtn').textContent = 'SAVE PRODUCT';
+  uploadedImageUrl = '';
+  uploadedPublicId = '';
+  document.querySelectorAll('.product-row').forEach(r => r.classList.remove('editing'));
+}
+
+/* ===== TOAST ===== */
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast${isError ? ' error' : ''} show`;
+  setTimeout(() => t.className = `toast${isError ? ' error' : ''}`, 3000);
+}
+
+function logout() {
+  localStorage.removeItem('cs_token');
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>
