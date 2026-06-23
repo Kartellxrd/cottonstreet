@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
+from typing import Optional
 from database import supabase
 from auth import verify_token
 
@@ -9,6 +10,7 @@ router = APIRouter()
 class CategoryCreate(BaseModel):
     name: str
     slug: str
+    image_url: Optional[str] = None  # Allows saving a Cloudinary image link for the category card
 
 
 @router.get("")

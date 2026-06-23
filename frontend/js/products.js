@@ -1,18 +1,17 @@
 /* =========================================================
-   products.js — rendering, filtering, search
+   products.js — rendering, filtering, search (Optimized Clean Plan)
    ========================================================= */
 
 import { fetchCategories, fetchProducts } from './api.js';
 import { addItem } from './store.js';
 import { showToast } from './main.js';
 
-// Friendly big-text watermark for category cards when no image is set
+// Friendly big-text watermarks for our 4 premium core macro sections
 const CATEGORY_LABELS = {
-  sneakers:    'SNEAKERS',
-  streetwear:  'STREET',
-  jerseys:     'JERSEYS',
-  accessories: 'EXTRAS',
-  phones:      'PHONES',
+  'apparel':              'CLOTHING',
+  'sportswear':           'ATHLETIC',
+  'electronics':          'TECH•PHONES',
+  'footwear-accessories': 'DRIP•GEAR'
 };
 
 let _categories = [];
@@ -108,12 +107,15 @@ function renderCategoryCards() {
   grid.innerHTML = _categories.map(c => {
     const count = _products.filter(p => p.categories?.slug === c.slug).length;
     const label = CATEGORY_LABELS[c.slug] || c.name.toUpperCase();
-    const imgHtml = c.image_url
-      ? `<img src="${esc(c.image_url)}" alt="${esc(c.name)}">`
-      : `<div class="cat-placeholder">${esc(label)}</div>`;
+    
+    // Premium theme-safe dark container style (Zero-cost fallback implementation)
+    const cardStyle = c.image_url
+      ? `background-image: linear-gradient(rgba(10,10,10,0.45), rgba(10,10,10,0.85)), url('${esc(c.image_url)}'); background-size: cover; background-position: center;`
+      : `background: var(--grey, #1a1a1a);`;
+
     return `
-    <div class="cat-card" data-cat="${esc(c.slug)}" role="button" tabindex="0">
-      ${imgHtml}
+    <div class="cat-card" data-cat="${esc(c.slug)}" style="${cardStyle}" role="button" tabindex="0">
+      <div class="cat-watermark">${esc(label)}</div>
       <div class="cat-info">
         <div class="cat-name">${esc(c.name)}</div>
         <div class="cat-count">${count} Item${count === 1 ? '' : 's'}</div>
@@ -225,10 +227,6 @@ export function setFilter(cat, btn) {
 export function setSearch(query) {
   _search = query.trim();
   renderProducts();
-}
-
-export function getProducts() {
-  return _products;
 }
 
 /* ---- Helpers ---- */

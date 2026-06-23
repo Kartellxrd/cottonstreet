@@ -297,7 +297,8 @@
 <nav>
   <div class="nav-logo">Cotton<span>Street</span> <span style="font-size:13px;color:var(--light);letter-spacing:1px;">ADMIN</span></div>
   <div class="nav-links">
-    <a href="products.html" class="nav-link active">Products</a>
+    <!-- Updated path to point explicitly to products (1).html -->
+    <a href="products (1).html" class="nav-link active">Products</a>
     <a href="orders.html" class="nav-link">Orders</a>
   </div>
   <button class="logout-btn" onclick="logout()">Logout</button>
@@ -341,6 +342,8 @@
           <option value="HOT">HOT</option>
           <option value="NEW">NEW</option>
           <option value="SALE">SALE</option>
+          <option value="WINTER">WINTER</option>
+          <option value="RETRO">RETRO</option>
         </select>
       </div>
     </div>
@@ -469,7 +472,6 @@ async function handleImageSelect(input) {
   const file = input.files[0];
   if (!file) return;
 
-  // Show local preview immediately
   const reader = new FileReader();
   reader.onload = e => {
     const preview = document.getElementById('imgPreview');
@@ -478,7 +480,6 @@ async function handleImageSelect(input) {
   };
   reader.readAsDataURL(file);
 
-  // Upload to Cloudinary via backend
   const progress = document.getElementById('uploadProgress');
   progress.style.display = 'block';
   progress.textContent = 'Uploading photo…';
