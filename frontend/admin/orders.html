@@ -241,15 +241,13 @@
 <nav>
   <div class="nav-logo">Cotton<span>Street</span> <span style="font-size:13px;color:var(--light);letter-spacing:1px;">ADMIN</span></div>
   <div class="nav-links">
-    <!-- Updated path to point explicitly to products (1).html -->
-    <a href="products (1).html" class="nav-link">Products</a>
+    <a href="products.html" class="nav-link">Products</a>
     <a href="orders.html" class="nav-link active">Orders</a>
   </div>
   <button class="logout-btn" onclick="logout()">Logout</button>
 </nav>
 
 <div class="page">
-  <!-- STATS -->
   <div class="stats">
     <div class="stat-card">
       <div class="stat-label">Total Orders</div>
@@ -269,7 +267,6 @@
     </div>
   </div>
 
-  <!-- FILTERS -->
   <div class="filters">
     <button class="filter-btn active" onclick="filterOrders('all', this)">All</button>
     <button class="filter-btn" onclick="filterOrders('pending', this)">Pending</button>
@@ -278,7 +275,6 @@
     <button class="filter-btn" onclick="filterOrders('cancelled', this)">Cancelled</button>
   </div>
 
-  <!-- ORDERS LIST -->
   <div class="orders-list" id="ordersList">
     <div class="empty-state">Loading orders…</div>
   </div>
@@ -286,7 +282,9 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+import { calculateGeographicHotspots } from '../js/admin/admin-intel.js';
+
 const API = (() => {
   const host = window.location.hostname;
   if (host.endsWith('.app.github.dev')) {
@@ -304,6 +302,7 @@ let currentFilter = 'all';
 
 async function init() {
   await loadOrders();
+  setupBulkBarUI();
 }
 
 async function loadOrders() {
@@ -323,9 +322,13 @@ function updateStats() {
   document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
   document.getElementById('statConfirmed').textContent = allOrders.filter(o => o.status === 'confirmed').length;
   document.getElementById('statDelivered').textContent = allOrders.filter(o => o.status === 'delivered').length;
+
+  // Log geographic hotspots for Botswana regional optimization
+  const hotspots = calculateGeographicHotspots(allOrders);
+  console.log("📍 Botswana Regional Order Hotspots:", hotspots);
 }
 
-function filterOrders(status, btn) {
+window.filterOrders = function(status, btn) {
   currentFilter = status;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -346,7 +349,9 @@ function renderOrders(list) {
       : JSON.stringify(o.items_json);
     const waMsg = encodeURIComponent(`Hi ${o.customer_name}, your Cotton Street order has been confirmed! 🔥\n\nWe'll be in touch shortly to arrange delivery.\n\nThank you for shopping with us! 🛍️`);
     return `
-    <div class="order-card">
+    <div class="order-card" data-id="${o.id}" style="position: relative; padding-left: 56px;">
+      <input type="checkbox" class="bulk-select" value="${o.id}" style="position: absolute; left: 20px; top: 24px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
+      
       <div class="order-top">
         <div>
           <div class="order-id">Order #${o.id}</div>
@@ -372,9 +377,85 @@ function renderOrders(list) {
       </div>
     </div>`;
   }).join('');
+
+  setupBulkCheckboxListeners();
 }
 
-async function updateStatus(id, status) {
+/* ===== FLOATING BULK BAR UI ===== */
+function setupBulkBarUI() {
+  let bulkBar = document.getElementById('floating-bulk-bar');
+  if (!bulkBar) {
+    bulkBar = document.createElement('div');
+    bulkBar.id = 'floating-bulk-bar';
+    bulkBar.style.cssText = `
+      position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+      background: var(--grey); border: 1px solid var(--accent); padding: 16px 28px;
+      border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); display: flex;
+      align-items: center; gap: 24px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000;
+    `;
+    bulkBar.innerHTML = `
+      <span style="color: var(--white); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1px;" id="bulk-select-count">0 SELECTED</span>
+      <div style="display:flex; gap:8px;">
+        <button id="bulk-btn-confirm" style="background: rgba(37,211,102,0.15); color: #25D366; border: 1px solid rgba(37,211,102,0.4); padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 10px; cursor: pointer;">CONFIRM ALL</button>
+        <button id="bulk-btn-deliver" style="background: var(--accent); color: var(--black); border: none; padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 10px; font-weight:bold; cursor: pointer;">DELIVER ALL</button>
+      </div>
+    `;
+    document.body.appendChild(bulkBar);
+
+    document.getElementById('bulk-btn-confirm').addEventListener('click', () => executeBulkUpdate('confirmed'));
+    document.getElementById('bulk-btn-deliver').addEventListener('click', () => executeBulkUpdate('delivered'));
+  }
+}
+
+function setupBulkCheckboxListeners() {
+  const checkboxes = document.querySelectorAll('.bulk-select');
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+      const checked = document.querySelectorAll('.bulk-select:checked');
+      const count = checked.length;
+      const bar = document.getElementById('floating-bulk-bar');
+      
+      const selectCountEl = document.getElementById('bulk-select-count');
+      if (selectCountEl) selectCountEl.textContent = `${count} SELECTED`;
+
+      if (bar) {
+        if (count > 0) {
+          bar.style.bottom = '32px';
+        } else {
+          bar.style.bottom = '-100px';
+        }
+      }
+    });
+  });
+}
+
+async function executeBulkUpdate(targetStatus) {
+  const checked = document.querySelectorAll('.bulk-select:checked');
+  const ids = Array.from(checked).map(cb => parseInt(cb.value));
+
+  if (!ids.length) return;
+  showToast(`Processing ${ids.length} orders...`);
+
+  try {
+    await Promise.all(ids.map(id => 
+      fetch(`${API}/orders/${id}/status`, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify({ status: targetStatus })
+      })
+    ));
+
+    showToast(`Marked ${ids.length} orders as ${targetStatus}!`);
+    await loadOrders();
+  } catch (e) {
+    showToast('Failed to update orders');
+  }
+
+  const bar = document.getElementById('floating-bulk-bar');
+  if (bar) bar.style.bottom = '-100px';
+}
+
+window.updateStatus = async function(id, status) {
   if (!status) return;
   try {
     const res = await fetch(`${API}/orders/${id}/status`, {
@@ -395,7 +476,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function logout() {
+window.logout = function() {
   localStorage.removeItem('cs_token');
   window.location.href = 'login.html';
 }

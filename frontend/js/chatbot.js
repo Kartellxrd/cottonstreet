@@ -37,7 +37,8 @@ function generateBotResponse(userMessage) {
   // 3. SNEAKERS & BRANDS (Nike, Adidas, New Balance, Vans, Converse, Puma, Lacoste)
   if (msg.match(/(sneaker|shoe|boot|nike|adidas|nb|new balance|vans|converse|puma|lacoste|slides)/)) {
     const matchingShoes = products.filter(p => {
-      const txt = (p.name + ' ' + (p.category || '')).toLowerCase();
+      const categorySlug = p.categories?.slug || '';
+      const txt = (p.name + ' ' + categorySlug).toLowerCase();
       return txt.match(/(sneaker|shoe|boot|nike|adidas|new balance|vans|converse|puma|lacoste|slides)/);
     });
 
@@ -72,7 +73,6 @@ function generateBotResponse(userMessage) {
 /* ---- Core Frontend UI Mechanics ---- */
 
 async function askClaude(userMessage) {
-  // We mimic an async network delay so it feels like a real high-end AI thinking!
   return new Promise((resolve) => {
     setTimeout(() => {
       const reply = generateBotResponse(userMessage);

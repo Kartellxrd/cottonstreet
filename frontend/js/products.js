@@ -1,16 +1,15 @@
 /* =========================================================
-   products.js — rendering, filtering, search (Optimized Clean Plan)
+   products.js — rendering, filtering, search
    ========================================================= */
 
 import { fetchCategories, fetchProducts } from './api.js';
 import { addItem } from './store.js';
 import { showToast } from './main.js';
 
-// Friendly big-text watermarks for our 4 premium core macro sections
 const CATEGORY_LABELS = {
-  'apparel':              'CLOTHING',
-  'sportswear':           'ATHLETIC',
-  'electronics':          'TECH•PHONES',
+  'apparel':               'CLOTHING',
+  'sportswear':            'ATHLETIC',
+  'electronics':           'TECH•PHONES',
   'footwear-accessories': 'DRIP•GEAR'
 };
 
@@ -19,42 +18,59 @@ let _products   = [];
 let _filter     = 'all';
 let _search     = '';
 
-/* ---- Public init (called once from main.js) ---- */
+/* ---- Public init ---- */
 
 export async function initProducts() {
-  await Promise.all([loadCategories(), loadProducts()]);
+  // Load products first so when categories render, they can instantly read product counts
+  await loadProducts();
+  await loadCategories();
 }
 
 /* ---- Data loading ---- */
 
 async function loadCategories() {
   try {
-    _categories = await fetchCategories();
+    const data = await fetchCategories();
+    
+    // Safeguard against API data wrapping variations
+    if (Array.isArray(data)) {
+      _categories = data;
+    } else if (data && Array.isArray(data.data)) {
+      _categories = data.data;
+    } else {
+      _categories = [];
+    }
   } catch (e) {
     console.error('loadCategories:', e);
     _categories = [];
   }
   renderFilterTabs();
   renderFooterShopLinks();
+  renderCategoryCards(); 
 }
 
 async function loadProducts() {
   setGridState('loading');
   try {
-    _products = await fetchProducts({ inStock: true });
+    const data = await fetchProducts({ inStock: true });
+    
+    if (Array.isArray(data)) {
+      _products = data;
+    } else if (data && Array.isArray(data.data)) {
+      _products = data.data;
+    } else {
+      _products = [];
+    }
   } catch (e) {
     console.error('loadProducts:', e);
     setGridState('error');
-    document.getElementById('catGrid').innerHTML =
-      '<div class="empty-state">Couldn\'t load categories right now.</div>';
     return;
   }
   updateCounts();
-  renderCategoryCards();
   renderProducts();
 }
 
-/* ---- Counts (hero badge + stats row) ---- */
+/* ---- Counts ---- */
 
 function updateCounts() {
   const n = _products.length;
@@ -100,21 +116,26 @@ function renderFooterShopLinks() {
 function renderCategoryCards() {
   const grid = document.getElementById('catGrid');
   if (!grid) return;
+
   if (!_categories.length) {
     grid.innerHTML = '<div class="empty-state">Categories coming soon.</div>';
     return;
   }
+
   grid.innerHTML = _categories.map(c => {
-    const count = _products.filter(p => p.categories?.slug === c.slug).length;
-    const label = CATEGORY_LABELS[c.slug] || c.name.toUpperCase();
+    // Safe property navigation preventing null runtime exceptions
+    const count = _products.filter(p => {
+      if (!p) return false;
+      const matchSlug = p.categories && p.categories.slug === c.slug;
+      const matchId = p.category_id === c.id;
+      return matchSlug || matchId;
+    }).length;
     
-    // Premium theme-safe dark container style (Zero-cost fallback implementation)
-    const cardStyle = c.image_url
-      ? `background-image: linear-gradient(rgba(10,10,10,0.45), rgba(10,10,10,0.85)), url('${esc(c.image_url)}'); background-size: cover; background-position: center;`
-      : `background: var(--grey, #1a1a1a);`;
+    const label = CATEGORY_LABELS[c.slug] || c.name.toUpperCase();
 
     return `
-    <div class="cat-card" data-cat="${esc(c.slug)}" style="${cardStyle}" role="button" tabindex="0">
+    <div class="cat-card" data-cat="${esc(c.slug)}">
+      <div class="cat-accent-bar"></div>
       <div class="cat-watermark">${esc(label)}</div>
       <div class="cat-info">
         <div class="cat-name">${esc(c.name)}</div>
@@ -125,9 +146,14 @@ function renderCategoryCards() {
   }).join('');
 
   grid.querySelectorAll('.cat-card').forEach(card => {
-    const handler = () => setFilter(card.dataset.cat);
+    const handler = () => {
+      setFilter(card.dataset.cat);
+      document.getElementById('drops')?.scrollIntoView({ behavior: 'smooth' });
+    };
     card.addEventListener('click', handler);
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') handler(); });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') handler();
+    });
   });
 }
 
@@ -140,20 +166,24 @@ export function renderProducts() {
   let list = _products;
 
   if (_filter !== 'all') {
-    list = list.filter(p => p.categories?.slug === _filter);
+    list = list.filter(p => p && p.categories && p.categories.slug === _filter);
   }
 
   if (_search) {
     const q = _search.toLowerCase();
     list = list.filter(p =>
-      p.name.toLowerCase().includes(q) ||
-      (p.variant || '').toLowerCase().includes(q)
+      p && (
+        p.name.toLowerCase().includes(q) ||
+        (p.variant || '').toLowerCase().includes(q)
+      )
     );
   }
 
   if (!list.length) {
     grid.innerHTML = `<div class="empty-state">${
-      _search ? `No results for "${esc(_search)}"` : 'No products in this category yet.'
+      _search
+        ? `No results for "${esc(_search)}" — try a different search.`
+        : 'No products in this category yet.'
     }</div>`;
     return;
   }
@@ -166,8 +196,10 @@ export function renderProducts() {
       ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy">`
       : `<div class="no-image">${initials}</div>`;
     const stockBadge = !p.in_stock
-      ? `<span class="product-badge sold-out">Sold Out</span>`
-      : p.badge ? `<span class="product-badge">${esc(p.badge)}</span>` : '';
+      ? `<span class="product-badge sold-out">SOLD OUT</span>`
+      : p.badge
+        ? `<span class="product-badge">${esc(p.badge)}</span>`
+        : '';
     return `
     <div class="product-card${!p.in_stock ? ' out-of-stock' : ''}" data-id="${p.id}">
       <div class="product-img-wrap">
@@ -189,7 +221,6 @@ export function renderProducts() {
     </div>`;
   }).join('');
 
-  // Bind add-to-bag buttons
   grid.querySelectorAll('.product-quick[data-id]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -203,12 +234,12 @@ export function renderProducts() {
         price:   prod.price,
         img:     prod.image_url,
       });
-      showToast(`${prod.name} added to bag`);
+      showToast(`${prod.name} added to bag 🔥`);
     });
   });
 }
 
-/* ---- Filter + search setters ---- */
+/* ---- Filter + search ---- */
 
 export function setFilter(cat, btn) {
   _filter = cat || 'all';
@@ -221,7 +252,6 @@ export function setFilter(cat, btn) {
     });
   }
   renderProducts();
-  document.getElementById('drops')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 export function setSearch(query) {
@@ -234,8 +264,12 @@ export function setSearch(query) {
 function setGridState(state) {
   const grid = document.getElementById('productGrid');
   if (!grid) return;
-  if (state === 'loading') grid.innerHTML = '<div class="loading-state">Loading products…</div>';
-  if (state === 'error')   grid.innerHTML = '<div class="empty-state">Couldn\'t connect right now. Refresh to try again.</div>';
+  if (state === 'loading') {
+    grid.innerHTML = '<div class="loading-state">Loading products…</div>';
+  }
+  if (state === 'error') {
+    grid.innerHTML = '<div class="empty-state">Couldn\'t connect right now. Refresh to try again.</div>';
+  }
 }
 
 function esc(str) {
@@ -243,3 +277,13 @@ function esc(str) {
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
   );
 }
+
+export function getProducts() {
+  return _products || [];
+}
+
+// Global hook resolution window registration for main.js search operations
+window.__csProducts = {
+  setFilter,
+  setSearch
+};

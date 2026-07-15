@@ -27,361 +27,197 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
   }
-  .nav-logo { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 3px; }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 8px; }
-  .nav-link {
-    padding: 8px 18px;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--light);
-    border: 1px solid transparent;
-    transition: all 0.2s;
-  }
-  .nav-link:hover, .nav-link.active { color: var(--accent); border-color: rgba(200,169,110,0.3); }
-  .logout-btn {
-    background: none;
-    border: 1px solid rgba(230,57,70,0.3);
-    color: var(--accent2);
-    padding: 8px 18px;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .logout-btn:hover { background: rgba(230,57,70,0.1); }
+  .nav-brand { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--white); }
+  .nav-brand span { color: var(--accent); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: var(--light); text-decoration: none; font-size: 14px; font-family: 'Space Mono', monospace; transition: color 0.3s; }
+  .nav-links a.active, .nav-links a:hover { color: var(--accent); }
+  .btn-logout { background: none; border: 1px solid rgba(255,255,255,0.1); color: var(--white); padding: 6px 12px; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; transition: 0.3s; }
+  .btn-logout:hover { border-color: var(--accent2); color: var(--accent2); }
 
-  /* LAYOUT */
-  .page { display: grid; grid-template-columns: 380px 1fr; gap: 0; min-height: calc(100vh - 57px); }
-
+  /* MAIN LAYOUT */
+  .container { display: flex; min-height: calc(100vh - 69px); }
+  
   /* FORM PANEL */
   .form-panel {
+    width: 380px;
     background: var(--grey);
-    border-right: 1px solid rgba(255,255,255,0.06);
-    padding: 28px 24px;
+    border-right: 1px solid rgba(200,169,110,0.1);
+    padding: 32px;
     overflow-y: auto;
+    height: calc(100vh - 69px);
   }
-  .panel-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: var(--accent);
-    margin-bottom: 24px;
-  }
-  .form-group { margin-bottom: 16px; }
-  .form-group label {
-    display: block;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--light);
-    margin-bottom: 6px;
-  }
-  .form-group input, .form-group select, .form-group textarea {
+  .form-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; color: var(--accent); margin-bottom: 24px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--light); margin-bottom: 8px; }
+  .form-group input, .form-group select {
     width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--black);
+    border: 1px solid var(--mid);
     color: var(--white);
-    padding: 12px 14px;
+    padding: 12px;
+    border-radius: 4px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
+    transition: 0.3s;
   }
-  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
-  .form-group select option { background: var(--grey); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  /* IMAGE UPLOAD */
-  .img-upload-area {
-    border: 2px dashed rgba(200,169,110,0.3);
-    padding: 20px;
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+  
+  /* PHOTO UPLOAD BOX */
+  .photo-upload-box {
+    border: 2px dashed var(--mid);
+    background: var(--black);
+    padding: 24px;
     text-align: center;
+    border-radius: 4px;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: 0.3s;
     position: relative;
   }
-  .img-upload-area:hover { border-color: var(--accent); }
-  .img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .upload-text { font-size: 12px; color: var(--light); }
-  .upload-text strong { color: var(--accent); display: block; }
-  .img-preview {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    margin-top: 12px;
-    display: none;
-    border: 1px solid rgba(200,169,110,0.2);
-  }
-  .upload-progress {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--accent);
-    margin-top: 8px;
-    display: none;
-  }
+  .photo-upload-box:hover { border-color: var(--accent); }
+  .photo-upload-box span { display: block; font-size: 24px; margin-bottom: 8px; }
+  .photo-upload-box p { font-size: 12px; color: var(--light); }
+  #imgPreview { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-top: 12px; display: none; }
+  .upload-progress { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); margin-top: 8px; display: none; }
 
-  .btn-save {
-    width: 100%;
-    background: var(--accent);
-    color: var(--black);
-    border: none;
-    padding: 15px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 8px;
-  }
-  .btn-save:hover { background: var(--white); }
-  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
-  .btn-clear {
-    width: 100%;
-    background: transparent;
-    color: var(--light);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 12px;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-  .btn-clear:hover { border-color: var(--accent); color: var(--accent); }
+  /* LIST PANEL */
+  .list-panel { flex: 1; padding: 40px; overflow-y: auto; height: calc(100vh - 69px); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .panel-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; }
+  .panel-title span { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--light); margin-left: 12px; }
+  .search-bar { width: 300px; position: relative; }
+  .search-bar input { width: 100%; background: var(--grey); border: 1px solid var(--mid); padding: 10px 16px; color: var(--white); font-size: 14px; border-radius: 4px; }
+  .search-bar input:focus { outline: none; border-color: var(--accent); }
 
-  .toast {
-    position: fixed;
-    bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--accent);
-    color: var(--black);
-    padding: 12px 24px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 700;
-    z-index: 9000;
-    transition: transform 0.3s;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: var(--accent2); color: white; }
-
-  /* PRODUCTS LIST */
-  .list-panel { padding: 28px 24px; overflow-y: auto; }
-  .list-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .list-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 22px;
-    letter-spacing: 2px;
-  }
-  .product-count {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--light);
-  }
-  .search-input {
-    width: 100%;
-    background: var(--grey);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--white);
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    outline: none;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
-  }
-  .search-input:focus { border-color: var(--accent); }
-
-  .product-list { display: flex; flex-direction: column; gap: 10px; }
+  /* PRODUCT ROW */
+  .product-list { display: flex; flex-direction: column; gap: 12px; }
   .product-row {
     background: var(--grey);
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.02);
+    padding: 16px 24px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 16px;
-    transition: border-color 0.2s;
+    gap: 20px;
+    border-radius: 4px;
+    transition: 0.3s;
   }
-  .product-row:hover { border-color: rgba(200,169,110,0.3); }
-  .product-row.editing { border-color: var(--accent); }
-  .product-thumb {
-    width: 52px; height: 64px;
-    object-fit: cover;
-    flex-shrink: 0;
-    background: var(--mid);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 16px;
-    color: rgba(255,255,255,0.2);
-  }
+  .product-row:hover { border-color: rgba(200,169,110,0.2); }
+  .product-row.editing { border-color: var(--accent); background: rgba(200,169,110,0.02); }
+  .product-thumb { width: 48px; height: 48px; border-radius: 4px; background: var(--black); display: flex; align-items: center; justify-content: center; overflow: hidden; font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); }
   .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .product-info { flex: 1; min-width: 0; }
-  .product-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .product-meta { font-size: 12px; color: var(--light); margin-top: 2px; }
-  .product-price { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); margin-top: 4px; }
-  .product-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .btn-edit {
-    background: rgba(200,169,110,0.15);
-    border: 1px solid rgba(200,169,110,0.3);
-    color: var(--accent);
-    padding: 7px 14px;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-edit:hover { background: rgba(200,169,110,0.25); }
-  .btn-delete {
-    background: rgba(230,57,70,0.1);
-    border: 1px solid rgba(230,57,70,0.2);
-    color: var(--accent2);
-    padding: 7px 14px;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-delete:hover { background: rgba(230,57,70,0.2); }
-  .stock-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 4px;
-    transition: transform 0.2s;
-  }
-  .stock-toggle:hover { transform: scale(1.2); }
-  .empty-list {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--light);
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-  }
+  .product-info { flex: 1; }
+  .product-name { font-weight: 500; font-size: 16px; margin-bottom: 4px; }
+  .product-meta { font-size: 12px; color: var(--light); }
+  .product-price { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); font-weight: bold; margin-top: 4px; }
+  
+  .product-actions { display: flex; gap: 8px; }
+  .product-actions button { border: none; padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: 0.3s; }
+  .btn-edit { background: var(--mid); color: var(--white); }
+  .btn-edit:hover { background: #3a3a3a; }
+  .btn-delete { background: rgba(230,57,70,0.1); color: var(--accent2); }
+  .btn-delete:hover { background: var(--accent2); color: var(--white); }
+  .stock-toggle { background: var(--black); border: 1px solid var(--mid) !important; font-size: 14px; width: 36px; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
 
-  @media (max-width: 900px) {
-    .page { grid-template-columns: 1fr; }
-    nav { padding: 12px 16px; }
-    .nav-links { display: none; }
-  }
+  /* SAVE BUTTON */
+  .btn-save { width: 100%; background: var(--accent); color: var(--black); border: none; padding: 14px; border-radius: 4px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
+  .btn-save:hover { background: #bda066; }
+  .btn-save:disabled { background: var(--mid); color: var(--light); cursor: not-allowed; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 32px; right: 32px; background: var(--grey); border: 1px solid var(--accent); color: var(--white); padding: 16px 24px; border-radius: 4px; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; z-index: 1000; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-color: var(--accent2); }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">Cotton<span>Street</span> <span style="font-size:13px;color:var(--light);letter-spacing:1px;">ADMIN</span></div>
+  <div class="nav-brand">COTTON STREET<span>.ADMIN</span></div>
   <div class="nav-links">
-    <!-- Updated path to point explicitly to products (1).html -->
-    <a href="products (1).html" class="nav-link active">Products</a>
-    <a href="orders.html" class="nav-link">Orders</a>
+    <a href="orders.html">ORDERS</a>
+    <a href="products.html" class="active">PRODUCTS</a>
+    <button class="btn-logout" onclick="logout()">LOGOUT</button>
   </div>
-  <button class="logout-btn" onclick="logout()">Logout</button>
 </nav>
 
-<div class="page">
-  <!-- ADD/EDIT FORM -->
+<div class="container">
   <div class="form-panel">
-    <div class="panel-title" id="formTitle">ADD PRODUCT</div>
+    <div class="form-title" id="formTitle">ADD PRODUCT</div>
     <input type="hidden" id="editId">
-
+    
     <div class="form-group">
-      <label>Product Name *</label>
+      <label>Product Name</label>
       <input type="text" id="pName" placeholder="e.g. Nike Air Max 95">
     </div>
+
     <div class="form-group">
       <label>Variant / Description</label>
       <input type="text" id="pVariant" placeholder="e.g. Black · All Sizes on Order">
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Price (BWP) *</label>
-        <input type="number" id="pPrice" placeholder="950">
-      </div>
-      <div class="form-group">
-        <label>Old Price (optional)</label>
-        <input type="number" id="pOldPrice" placeholder="1200">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Category *</label>
-        <select id="pCategory">
-          <option value="">Select...</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Badge</label>
-        <select id="pBadge">
-          <option value="">None</option>
-          <option value="HOT">HOT</option>
-          <option value="NEW">NEW</option>
-          <option value="SALE">SALE</option>
-          <option value="WINTER">WINTER</option>
-          <option value="RETRO">RETRO</option>
-        </select>
-      </div>
+
+    <div class="form-group">
+      <label>Price (BWP)</label>
+      <input type="number" id="pPrice" placeholder="e.g. 1850">
     </div>
 
     <div class="form-group">
-      <label>Product Photo</label>
-      <div class="img-upload-area" id="uploadArea">
-        <input type="file" id="imgFile" accept="image/*" onchange="handleImageSelect(this)">
-        <div class="upload-icon">📸</div>
-        <div class="upload-text">
-          <strong>Click to choose photo</strong>
-          from your device
-        </div>
+      <label>Old Price (BWP - Optional)</label>
+      <input type="number" id="pOldPrice" placeholder="e.g. 2400">
+    </div>
+
+    <div class="form-group">
+      <label>Category</label>
+      <select id="pCategory">
+        <option value="">Select category…</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Promo Badge (Optional)</label>
+      <select id="pBadge">
+        <option value="">None</option>
+        <option value="NEW">NEW</option>
+        <option value="HOT">HOT</option>
+        <option value="SALE">SALE</option>
+        <option value="TRENDING">TRENDING</option>
+        <option value="BESTSELLER">BESTSELLER</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Product Image</label>
+      <div class="photo-upload-box" id="uploadArea">
+        <span>📸</span>
+        <p>Drag & drop image here or click to browse</p>
+        <img id="imgPreview" alt="Upload preview">
+        <div class="upload-progress" id="uploadProgress">Uploading…</div>
       </div>
-      <img class="img-preview" id="imgPreview" alt="Preview">
-      <div class="upload-progress" id="uploadProgress">Uploading to Cloudinary…</div>
+      <input type="file" id="imgFile" accept="image/*" style="display: none;" onchange="handleImageSelect(this)">
     </div>
 
     <button class="btn-save" id="saveBtn" onclick="saveProduct()">SAVE PRODUCT</button>
-    <button class="btn-clear" onclick="clearForm()">CLEAR FORM</button>
+    <button class="btn-edit" id="cancelBtn" style="width: 100%; margin-top: 10px; padding: 12px; font-family: 'Space Mono', monospace; font-size: 12px; display: none;" onclick="clearForm()">CANCEL</button>
   </div>
 
-  <!-- PRODUCTS LIST -->
   <div class="list-panel">
-    <div class="list-header">
-      <div class="list-title">ALL PRODUCTS</div>
-      <div class="product-count" id="productCount">Loading…</div>
+    <div class="panel-header">
+      <div class="panel-title">ALL PRODUCTS <span id="productCount">0 products</span></div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search by name or info…" oninput="searchProducts(this.value)">
+      </div>
     </div>
-    <input type="text" class="search-input" placeholder="Search products…" oninput="searchProducts(this.value)">
+
     <div class="product-list" id="productList">
-      <div class="empty-list">Loading products…</div>
-    </div>
+      </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast">Product added successfully</div>
 
-<script>
+<script type="module">
+import { classifyProductName, compressImage } from '../js/admin/admin-intel.js';
+
 /* ===== CONFIG ===== */
 const API = (() => {
   const host = window.location.hostname;
@@ -400,11 +236,86 @@ let allProducts = [];
 let categories = [];
 let uploadedImageUrl = '';
 let uploadedPublicId = '';
+let activeCompressedFile = null; // Stores our optimized image
 
 /* ===== INIT ===== */
 async function init() {
   await loadCategories();
   await loadProducts();
+  setupDragAndDrop();
+  setupNLPAssistant();
+}
+
+/* ===== NLP SMART FILL ===== */
+function setupNLPAssistant() {
+  const pNameInput = document.getElementById('pName');
+  const pVariantInput = document.getElementById('pVariant');
+  const pCategorySelect = document.getElementById('pCategory');
+  const pBadgeSelect = document.getElementById('pBadge');
+
+  if (!pNameInput) return;
+
+  // Real-time listener checking what the admin user is typing
+  pNameInput.addEventListener('input', (e) => {
+    const prediction = classifyProductName(e.target.value);
+    if (prediction) {
+      // 1. Auto-assign corresponding Category option
+      if (pCategorySelect) {
+        for (let option of pCategorySelect.options) {
+          if (option.text.toLowerCase().includes(prediction.category) || option.value === prediction.category) {
+            pCategorySelect.value = option.value;
+            break;
+          }
+        }
+      }
+      
+      // 2. Auto-set high converting Badge if empty
+      if (pBadgeSelect && pBadgeSelect.value === "") {
+        pBadgeSelect.value = prediction.suggestedBadge;
+      }
+
+      // 3. Auto-draft matching Variant if currently empty
+      if (pVariantInput && !pVariantInput.value.trim()) {
+        pVariantInput.value = prediction.defaultVariant;
+      }
+    }
+  });
+}
+
+/* ===== DRAG AND DROP OPTIMIZATION ===== */
+function setupDragAndDrop() {
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('imgFile');
+
+  if (!uploadArea || !fileInput) return;
+
+  // Let the admin click the area to prompt standard browser picker
+  uploadArea.addEventListener('click', () => fileInput.click());
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = 'var(--accent)';
+      uploadArea.style.background = 'rgba(200,169,110,0.05)';
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '';
+      uploadArea.style.background = '';
+    }, false);
+  });
+
+  uploadArea.addEventListener('drop', async (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length) {
+      fileInput.files = files; 
+      await handleImageSelect(fileInput);
+    }
+  });
 }
 
 async function loadCategories() {
@@ -459,7 +370,7 @@ function renderProducts(list) {
   }).join('');
 }
 
-function searchProducts(q) {
+window.searchProducts = function(q) {
   const filtered = allProducts.filter(p =>
     p.name.toLowerCase().includes(q.toLowerCase()) ||
     (p.variant || '').toLowerCase().includes(q.toLowerCase())
@@ -467,26 +378,34 @@ function searchProducts(q) {
   renderProducts(filtered);
 }
 
-/* ===== IMAGE UPLOAD ===== */
-async function handleImageSelect(input) {
+/* ===== IMAGE UPLOAD (COMPRESSED) ===== */
+window.handleImageSelect = async function(input) {
   const file = input.files[0];
   if (!file) return;
 
+  const progress = document.getElementById('uploadProgress');
+  progress.style.display = 'block';
+  progress.textContent = '⚡ Optimizing photo...';
+
+  // Apply on-device HTML5 canvas compression
+  activeCompressedFile = await compressImage(file);
+  const originalSize = (file.size / 1024).toFixed(1);
+  const newSize = (activeCompressedFile.size / 1024).toFixed(1);
+
+  // Render direct image preview
   const reader = new FileReader();
   reader.onload = e => {
     const preview = document.getElementById('imgPreview');
     preview.src = e.target.result;
     preview.style.display = 'block';
   };
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(activeCompressedFile);
 
-  const progress = document.getElementById('uploadProgress');
-  progress.style.display = 'block';
-  progress.textContent = 'Uploading photo…';
+  progress.textContent = `Optimized image (${originalSize} KB ➡️ ${newSize} KB). Uploading…`;
 
   try {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', activeCompressedFile);
     const res = await fetch(`${API}/upload/image`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${token}` },
@@ -496,8 +415,8 @@ async function handleImageSelect(input) {
     const data = await res.json();
     uploadedImageUrl = data.url;
     uploadedPublicId = data.public_id;
-    progress.textContent = '✅ Photo uploaded!';
-    setTimeout(() => progress.style.display = 'none', 2000);
+    progress.textContent = `✅ Upload complete! Saved ${Math.round(100 - (newSize/originalSize * 100))}% storage cost.`;
+    setTimeout(() => progress.style.display = 'none', 3000);
   } catch (e) {
     progress.textContent = '❌ Upload failed. Try again.';
     showToast('Image upload failed', true);
@@ -505,7 +424,7 @@ async function handleImageSelect(input) {
 }
 
 /* ===== SAVE PRODUCT ===== */
-async function saveProduct() {
+window.saveProduct = async function() {
   const name = document.getElementById('pName').value.trim();
   const variant = document.getElementById('pVariant').value.trim();
   const price = document.getElementById('pPrice').value;
@@ -563,7 +482,7 @@ async function saveProduct() {
 }
 
 /* ===== EDIT ===== */
-function editProduct(id) {
+window.editProduct = function(id) {
   const p = allProducts.find(p => p.id === id);
   if (!p) return;
   document.getElementById('editId').value = p.id;
@@ -582,13 +501,14 @@ function editProduct(id) {
     uploadedPublicId = p.cloudinary_id || '';
   }
   document.getElementById('saveBtn').textContent = 'UPDATE PRODUCT';
+  document.getElementById('cancelBtn').style.display = 'block';
   document.querySelectorAll('.product-row').forEach(r => r.classList.remove('editing'));
   document.getElementById(`row-${id}`)?.classList.add('editing');
   document.querySelector('.form-panel').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ===== DELETE ===== */
-async function deleteProduct(id, name) {
+window.deleteProduct = async function(id, name) {
   if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
   try {
     const res = await fetch(`${API}/products/${id}`, { method: 'DELETE', headers });
@@ -599,7 +519,7 @@ async function deleteProduct(id, name) {
 }
 
 /* ===== TOGGLE STOCK ===== */
-async function toggleStock(id, currentStatus) {
+window.toggleStock = async function(id, currentStatus) {
   try {
     await fetch(`${API}/products/${id}/stock`, { method: 'PATCH', headers });
     showToast(currentStatus ? 'Marked as out of stock' : 'Marked as in stock');
@@ -608,7 +528,7 @@ async function toggleStock(id, currentStatus) {
 }
 
 /* ===== CLEAR FORM ===== */
-function clearForm() {
+window.clearForm = function() {
   document.getElementById('editId').value = '';
   document.getElementById('formTitle').textContent = 'ADD PRODUCT';
   document.getElementById('pName').value = '';
@@ -620,8 +540,10 @@ function clearForm() {
   document.getElementById('imgPreview').style.display = 'none';
   document.getElementById('imgFile').value = '';
   document.getElementById('saveBtn').textContent = 'SAVE PRODUCT';
+  document.getElementById('cancelBtn').style.display = 'none';
   uploadedImageUrl = '';
   uploadedPublicId = '';
+  activeCompressedFile = null;
   document.querySelectorAll('.product-row').forEach(r => r.classList.remove('editing'));
 }
 
@@ -633,7 +555,7 @@ function showToast(msg, isError = false) {
   setTimeout(() => t.className = `toast${isError ? ' error' : ''}`, 3000);
 }
 
-function logout() {
+window.logout = function() {
   localStorage.removeItem('cs_token');
   window.location.href = 'login.html';
 }
