@@ -6,6 +6,8 @@ import { initProducts, setFilter } from './products.js';
 import { subscribe, getBag, removeItem, getTotal, getCount, clearBag } from './store.js';
 import { submitOrder } from './api.js';
 import { initChatbot } from './chatbot.js';
+import { addToCart } from './cart.js';
+import { getProducts, getCategories } from './products.js';
 
 const WHATSAPP_NUMBER = '26776707364';
 
@@ -17,15 +19,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   initCursor();
   initBagDrawer();
   initOrderForm();
-  subscribe(renderBag); // re-render bag whenever store changes
+  subscribe(renderBag); 
 
-  await initProducts();
+  await initProducts(); // Wait for data to load
+  populateCategories(); // Now populate the dropdown
   initChatbot();
   initSearch();
 });
 
 /* =========================================================
-   CUSTOM CURSOR (desktop only — CSS hides it on touch)
+   CUSTOM CURSOR
    ========================================================= */
 
 function initCursor() {
@@ -42,7 +45,6 @@ function initCursor() {
     }, 80);
   });
 
-  // Re-bind after dynamic content is added to the DOM
   document.addEventListener('click', bindCursorHover, { once: true });
   setTimeout(bindCursorHover, 1500);
 }
@@ -100,13 +102,13 @@ function closeBag() {
 }
 
 function renderBag(bag) {
-  // Update count badge
   const count = getCount();
   document.getElementById('bagCount').textContent = count;
 
-  // Bag total
+  // Deposit Logic (Local calculation)
   const total = getTotal();
-  document.getElementById('bagTotal').textContent = `P${total.toLocaleString()}`;
+  const deposit = total * 0.50;
+  const balance = total - deposit;
 
   const itemsEl  = document.getElementById('bagItems');
   const footerEl = document.getElementById('bagFooter');
@@ -138,6 +140,15 @@ function renderBag(bag) {
     </div>`;
   }).join('');
 
+  footerEl.innerHTML = `
+    <div style="padding:10px; font-size:0.9em; border-top:1px solid #eee;">
+      <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span> <span>P${total.toLocaleString()}</span></div>
+      <div style="display:flex; justify-content:space-between; color:#c8a96e; font-weight:bold;"><span>Req. 50% Deposit:</span> <span>P${deposit.toLocaleString()}</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>Balance Due:</span> <span>P${balance.toLocaleString()}</span></div>
+    </div>
+    <button class="checkout-btn" onclick="goToCheckout()" style="width:100%; padding:12px; cursor:pointer;">CHECKOUT VIA WHATSAPP</button>
+  `;
+
   itemsEl.querySelectorAll('.bag-item-remove').forEach(btn => {
     btn.addEventListener('click', () => removeItem(Number(btn.dataset.id)));
   });
@@ -148,11 +159,9 @@ function goToCheckout() {
   if (!bag.length) { showToast('Your bag is empty!'); return; }
   closeBag();
   document.getElementById('order')?.scrollIntoView({ behavior: 'smooth' });
-  showToast('Fill in your details below to complete your order');
 }
 
-// Expose to HTML onclick attributes
-window.toggleBag    = toggleBag;
+window.toggleBag = toggleBag;
 window.goToCheckout = goToCheckout;
 
 /* =========================================================
@@ -168,7 +177,6 @@ async function submitDirectOrder() {
   const lname    = document.getElementById('lname')?.value.trim();
   const phone    = document.getElementById('phone')?.value.trim();
   const town     = document.getElementById('town')?.value;
-  const interest = document.getElementById('productInterest')?.value;
   const notes    = document.getElementById('notes')?.value.trim();
 
   if (!fname || !phone || !town) {
@@ -181,48 +189,26 @@ async function submitDirectOrder() {
 
   const bag   = getBag();
   const total = getTotal();
-  const bagSummary = bag.length
-    ? bag.map(b => `${b.qty}× ${b.name}`).join(', ')
-    : notes || interest || 'General enquiry';
+  const deposit = total * 0.50;
+  const balance = total - deposit;
+  const bagSummary = bag.map(b => `${b.qty}× ${b.name}`).join(', ');
 
-  // Build WhatsApp message
+  // WhatsApp Message
   let msg = `🛒 *NEW ORDER — Cotton Street*\n\n`;
-  msg += `*Customer:* ${fname} ${lname}\n`;
-  msg += `*Phone:* ${phone}\n`;
-  msg += `*Town:* ${town}\n\n`;
-  if (bagSummary) msg += `*Items:* ${bagSummary}\n`;
-  if (total > 0)  msg += `*Total:* P${total.toLocaleString()}\n`;
-  if (notes)      msg += `*Notes:* ${notes}\n`;
-  msg += `\n_Sent from the Cotton Street website_`;
+  msg += `*Customer:* ${fname} ${lname}\n*Phone:* ${phone}\n*Town:* ${town}\n\n`;
+  msg += `*Items:* ${bagSummary}\n\n`;
+  msg += `*Grand Total:* P${total.toLocaleString()}\n`;
+  msg += `⚡ *REQUIRED 50% DEPOSIT:* P${deposit.toLocaleString()}\n`;
+  msg += `🤝 *BALANCE ON DELIVERY:* P${balance.toLocaleString()}\n\n`;
+  if (notes) msg += `*Notes:* ${notes}\n`;
+  msg += `_Sent from the Cotton Street website_`;
 
-  // Log to Supabase (non-blocking)
-  await submitOrder({
-    customer_name:  `${fname} ${lname}`.trim(),
-    customer_phone: phone,
-    customer_town:  town,
-    items_json: bag.length
-      ? bag.map(b => ({ id: b.id, name: b.name, variant: b.variant, qty: b.qty, price: b.price }))
-      : [{ note: notes || interest || 'General enquiry' }],
-    total:  total > 0 ? total : null,
-    notes:  notes || null,
-  });
+  await submitOrder({ customer_name: `${fname} ${lname}`, customer_phone: phone, customer_town: town, items_json: bag, total, notes });
 
-  // Open WhatsApp
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
-
-  // Reset form + bag
   clearBag();
-  ['fname', 'lname', 'phone', 'notes'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  ['town', 'productInterest'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.selectedIndex = 0;
-  });
-
   if (submitBtn) submitBtn.disabled = false;
-  showToast('Order sent! Opening WhatsApp…');
+  showToast('Order sent!');
 }
 
 /* =========================================================
@@ -238,12 +224,28 @@ export function showToast(msg) {
   t._timer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
 function esc(str) {
   return String(str ?? '').replace(/[&<>"']/g, m =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
   );
+}
+
+
+function populateCategories() {
+    const select = document.getElementById('productInterest');
+    if (!select) return;
+
+    // Get the master list of categories
+    const categories = getCategories(); 
+
+    // Clear and reset
+    select.innerHTML = '<option value="">Select Category</option>';
+
+    // Add them dynamically
+    categories.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.name; // Use the name from the object
+        option.textContent = c.name;
+        select.appendChild(option);
+    });
 }

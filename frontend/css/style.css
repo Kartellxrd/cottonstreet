@@ -430,6 +430,97 @@ section { padding: 100px 60px; }
 }
 .checkout-btn:hover { background: #128C7E; }
 
+/* Style overrides for the updated deposit-focused Cart Drawer */
+.deposit-breakdown {
+  padding: 15px 0;
+  border-top: 1px dashed rgba(200, 169, 110, 0.2);
+  margin-bottom: 15px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--light);
+  margin-bottom: 8px;
+}
+
+.breakdown-row.highlight-deposit {
+  font-size: 15px;
+  color: var(--accent); /* Premium Gold color */
+  border-top: 1px solid rgba(200, 169, 110, 0.15);
+  border-bottom: 1px solid rgba(200, 169, 110, 0.15);
+  padding: 8px 0;
+  margin: 10px 0;
+}
+
+.breakdown-row.highlight-deposit strong {
+  font-size: 17px;
+  color: var(--accent);
+}
+
+.bag-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bag-item-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--mid);
+}
+
+.bag-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bag-item-info {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.bag-item-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.bag-item-meta {
+  font-size: 11px;
+  color: var(--light);
+}
+
+.bag-item-price {
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.bag-item-controls {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.bag-item-controls button {
+  background: none;
+  border: none;
+  color: var(--white);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.bag-item-controls span {
+  font-size: 12px;
+  padding: 0 4px;
+}
+
 /* ===== CHATBOT ===== */
 .chat-bubble {
   position: fixed; bottom: 28px; right: 28px; z-index: 3000;

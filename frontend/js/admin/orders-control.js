@@ -14,7 +14,10 @@ async function loadOrders() {
   try {
     allOrders = await fetchOrders();
     updateStats();
-    renderOrders(allOrders);
+    
+    // Maintain the active filter when refreshing list
+    const filtered = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
+    renderOrders(filtered);
   } catch (e) {
     const listEl = document.getElementById('ordersList');
     if (listEl) listEl.innerHTML = '<div class="empty-state">Failed to load orders</div>';
@@ -39,7 +42,15 @@ function updateStats() {
 window.filterOrders = function(status, btn) {
   currentFilter = status;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    // Fallback search matching the text if no direct element was passed
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(b => {
+      if (b.textContent.toLowerCase() === status.toLowerCase()) b.classList.add('active');
+    });
+  }
   const filtered = status === 'all' ? allOrders : allOrders.filter(o => o.status === status);
   renderOrders(filtered);
 };
@@ -49,7 +60,7 @@ function renderOrders(list) {
   if (!container) return;
 
   if (list.length === 0) {
-    container.innerHTML = '<div class="empty-state">No orders found</div>';
+    container.innerHTML = `<div class="empty-state">No ${currentFilter !== 'all' ? currentFilter : ''} orders found</div>`;
     return;
   }
 
@@ -160,13 +171,16 @@ async function executeBulkUpdate(targetStatus) {
     ));
 
     showToast(`Marked ${ids.length} orders as ${targetStatus}!`);
+    
+    // Animate selection bar back down
+    const bar = document.getElementById('floating-bulk-bar');
+    if (bar) bar.style.bottom = '-100px';
+
+    // Reload active order list completely
     await loadOrders();
   } catch (e) {
     showToast('Failed to update orders');
   }
-
-  const bar = document.getElementById('floating-bulk-bar');
-  if (bar) bar.style.bottom = '-100px';
 }
 
 window.updateStatus = async function(id, status) {

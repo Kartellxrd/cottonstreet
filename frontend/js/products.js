@@ -287,3 +287,7 @@ window.__csProducts = {
   setFilter,
   setSearch
 };
+
+export function getCategories() {
+  return _categories || [];
+}

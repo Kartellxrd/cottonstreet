@@ -1,27 +1,32 @@
 // js/admin/admin-intel.js
 
 // --- NLP Rules Mapping ---
+// Note: Category matching supports both string IDs/names and typical database primary key associations (e.g. 1, 2, 3, 4)
 const PRODUCT_NLP_RULES = [
   {
     category: 'clothing', // Matches backend category IDs or values
+    categoryIdFallback: 1, // Common auto-increment primary key ID fallback
     keywords: ['nike', 'adidas', 'hoodie', 'tee', 'shirt', 'pants', 'cargo', 'jacket', 'fleece', 'jeans', 'essentials', 'gallery', 'dept', 'apparel'],
     defaultVariant: 'Premium Cotton Blend • Standard Fit',
     suggestedBadge: 'NEW'
   },
   {
     category: 'tech-phones',
+    categoryIdFallback: 2,
     keywords: ['iphone', 'apple', 'pro', 'max', 'samsung', 'galaxy', 'charger', 'buds', 'airpods', 'case', 'watch', 'tech', 'adapter'],
     defaultVariant: '100% Battery Health • Unlocked • Pristine Condition',
     suggestedBadge: 'HOT'
   },
   {
     category: 'drip-gear',
+    categoryIdFallback: 3,
     keywords: ['jordan', 'yeezy', 'glide', 'nocta', 'sneaker', 'shoe', 'slide', 'bape', 'croc', 'clog', 'boot', 'dunk', 'force'],
     defaultVariant: 'All Sizes Available • Brand New in Box',
     suggestedBadge: 'TRENDING'
   },
   {
     category: 'athletic',
+    categoryIdFallback: 4,
     keywords: ['jersey', 'tracksuit', 'kit', 'chelsea', 'madrid', 'arsenal', 'united', 'fc', 'retro', 'sportswear'],
     defaultVariant: 'Player Version • Dri-Fit Tech',
     suggestedBadge: 'NEW'

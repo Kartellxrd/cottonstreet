@@ -152,8 +152,10 @@ window.handleImageSelect = async function(input) {
   if (!file) return;
 
   const progress = document.getElementById('uploadProgress');
-  progress.style.display = 'block';
-  progress.textContent = '⚡ Optimizing photo...';
+  if (progress) {
+    progress.style.display = 'block';
+    progress.textContent = '⚡ Optimizing photo...';
+  }
 
   activeCompressedFile = await compressImage(file);
   const originalSize = (file.size / 1024).toFixed(1);
@@ -169,16 +171,20 @@ window.handleImageSelect = async function(input) {
   };
   reader.readAsDataURL(activeCompressedFile);
 
-  progress.textContent = `Optimized image (${originalSize} KB ➡️ ${newSize} KB). Uploading…`;
+  if (progress) {
+    progress.textContent = `Optimized image (${originalSize} KB ➡️ ${newSize} KB). Uploading…`;
+  }
 
   try {
     const data = await uploadProductImage(activeCompressedFile);
     uploadedImageUrl = data.url;
     uploadedPublicId = data.public_id;
-    progress.textContent = `✅ Upload complete! Saved ${Math.round(100 - (newSize/originalSize * 100))}% storage cost.`;
-    setTimeout(() => progress.style.display = 'none', 3000);
+    if (progress) {
+      progress.textContent = `✅ Upload complete! Saved ${Math.round(100 - (newSize/originalSize * 100))}% storage cost.`;
+      setTimeout(() => progress.style.display = 'none', 3000);
+    }
   } catch (e) {
-    progress.textContent = '❌ Upload failed. Try again.';
+    if (progress) progress.textContent = '❌ Upload failed. Try again.';
     showToast('Image upload failed', true);
   }
 };
@@ -198,8 +204,10 @@ window.saveProduct = async function() {
   }
 
   const btn = document.getElementById('saveBtn');
-  btn.disabled = true;
-  btn.textContent = 'SAVING…';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'SAVING…';
+  }
 
   const payload = {
     name,
@@ -222,8 +230,10 @@ window.saveProduct = async function() {
     showToast('Failed to save product', true);
   }
 
-  btn.disabled = false;
-  btn.textContent = 'SAVE PRODUCT';
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = editId ? 'UPDATE PRODUCT' : 'SAVE PRODUCT';
+  }
 };
 
 window.editProduct = function(id) {
@@ -240,19 +250,25 @@ window.editProduct = function(id) {
   
   if (p.image_url) {
     const preview = document.getElementById('imgPreview');
-    preview.src = p.image_url;
-    preview.style.display = 'block';
+    if (preview) {
+      preview.src = p.image_url;
+      preview.style.display = 'block';
+    }
     uploadedImageUrl = p.image_url;
     uploadedPublicId = p.cloudinary_id || '';
   }
   
-  document.getElementById('saveBtn').textContent = 'UPDATE PRODUCT';
+  const saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) saveBtn.textContent = 'UPDATE PRODUCT';
+
   const cancelBtn = document.getElementById('cancelBtn');
   if (cancelBtn) cancelBtn.style.display = 'block';
   
   document.querySelectorAll('.product-row').forEach(r => r.classList.remove('editing'));
   document.getElementById(`row-${id}`)?.classList.add('editing');
-  document.querySelector('.form-panel').scrollTo({ top: 0, behavior: 'smooth' });
+  
+  const formPanel = document.querySelector('.form-panel');
+  if (formPanel) formPanel.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.deleteProduct = async function(id, name) {
@@ -285,9 +301,15 @@ window.clearForm = function() {
   document.getElementById('pOldPrice').value = '';
   document.getElementById('pCategory').value = '';
   document.getElementById('pBadge').value = '';
-  document.getElementById('imgPreview').style.display = 'none';
-  document.getElementById('imgFile').value = '';
-  document.getElementById('saveBtn').textContent = 'SAVE PRODUCT';
+  
+  const preview = document.getElementById('imgPreview');
+  if (preview) preview.style.display = 'none';
+
+  const fileInput = document.getElementById('imgFile');
+  if (fileInput) fileInput.value = '';
+
+  const saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) saveBtn.textContent = 'SAVE PRODUCT';
   
   const cancelBtn = document.getElementById('cancelBtn');
   if (cancelBtn) cancelBtn.style.display = 'none';
@@ -305,3 +327,6 @@ function showToast(msg, isError = false) {
   t.className = `toast${isError ? ' error' : ''} show`;
   setTimeout(() => t.className = `toast${isError ? ' error' : ''}`, 3000);
 }
+
+// Bind clearForm globally so it remains functional inline on the Cancel button
+window.clearForm = clearForm;
