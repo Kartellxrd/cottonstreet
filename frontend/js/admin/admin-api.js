@@ -1,35 +1,29 @@
 // js/admin/admin-api.js
 
-/**
- * Resolves the backend server endpoint automatically based on active workspace environments.
- * Aligned precisely with client-side api.js.
- */
 export const API_BASE = (() => {
   const host = window.location.hostname;
-  
-  // 1. Check for newer Codespace preview links (.preview.app.github.dev)
+
+  // Codespace preview links
   if (host.includes('.preview.app.github.dev')) {
     const apiHost = host.replace(/-\d+\.preview\.app\.github\.dev$/, '-8000.preview.app.github.dev');
     return `${window.location.protocol}//${apiHost}/api`;
   }
-  
-  // 2. Check for older Codespace links (.app.github.dev)
+
+  // Codespace links
   if (host.endsWith('.app.github.dev')) {
     const apiHost = host.replace(/-\d+\.app\.github\.dev$/, '-8000.app.github.dev');
     return `${window.location.protocol}//${apiHost}/api`;
   }
-  
-  // 3. Local environments
+
+  // Local development
   if (host === 'localhost' || host === '127.0.0.1') {
     return 'http://localhost:8000/api';
   }
-  
-  return 'http://localhost:8000/api';
+
+  // Production (Vercel or any other host)
+  return 'https://cottonstreet-3.onrender.com/api';
 })();
 
-/**
- * Generates Authorization headers dynamically using stored admin credentials.
- */
 export function getAuthHeaders() {
   const token = localStorage.getItem('cs_token');
   if (!token) {
@@ -42,7 +36,6 @@ export function getAuthHeaders() {
   };
 }
 
-/* ----- Helper for connection stutters (Race conditions) ----- */
 async function fetchWithRetry(url, options = {}, retries = 3, delay = 400) {
   try {
     const res = await fetch(url, options);
@@ -58,23 +51,20 @@ async function fetchWithRetry(url, options = {}, retries = 3, delay = 400) {
   }
 }
 
-/* ===== PRODUCT API METHODS ===== */
-
 export async function fetchCategories() {
   try {
     return await fetchWithRetry(`${API_BASE}/categories`);
   } catch (err) {
-    console.error("❌ Failed to fetch categories after retries:", err);
+    console.error('❌ Failed to fetch categories after retries:', err);
     return [];
   }
 }
 
 export async function fetchProducts() {
   try {
-    // For admin purposes, we fetch all products regardless of stock status
     return await fetchWithRetry(`${API_BASE}/products?in_stock=all`);
   } catch (err) {
-    console.error("❌ Failed to fetch products after retries:", err);
+    console.error('❌ Failed to fetch products after retries:', err);
     return [];
   }
 }
@@ -82,7 +72,6 @@ export async function fetchProducts() {
 export async function saveProduct(payload, editId = null) {
   const url = editId ? `${API_BASE}/products/${editId}` : `${API_BASE}/products`;
   const method = editId ? 'PUT' : 'POST';
-  
   const res = await fetch(url, {
     method,
     headers: getAuthHeaders(),
@@ -113,7 +102,6 @@ export async function toggleProductStock(id) {
 export async function uploadProductImage(compressedFile) {
   const formData = new FormData();
   formData.append('file', compressedFile);
-  
   const token = localStorage.getItem('cs_token');
   const res = await fetch(`${API_BASE}/upload/image`, {
     method: 'POST',
@@ -123,8 +111,6 @@ export async function uploadProductImage(compressedFile) {
   if (!res.ok) throw new Error('Could not upload image to server.');
   return res.json();
 }
-
-/* ===== ORDERS API METHODS ===== */
 
 export async function fetchOrders() {
   const res = await fetch(`${API_BASE}/orders`, { headers: getAuthHeaders() });
