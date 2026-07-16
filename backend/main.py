@@ -23,25 +23,28 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# PRODUCTION READY CORS
-# We define allowed origins based on the environment variable
-# If FRONTEND_URL is not set, it defaults to an empty list (more secure)
-allowed_origins = os.getenv("FRONTEND_URL", "").split(",") if os.getenv("FRONTEND_URL") else []
-
+# FIXED CORS: Hardcoded to ensure the Vercel app is allowed access
+# We also include common local dev ports just in case
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if allowed_origins else ["https://cottonstreet-47mv.vercel.app"],
+    allow_origins=[
+        "https://cottonstreet-47mv.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# API Routes
 app.include_router(auth_router.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(categories.router, prefix="/api/categories", tags=["Categories"])
 app.include_router(products.router, prefix="/api/products", tags=["Products"])
 app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
 app.include_router(uploads.router, prefix="/api/upload", tags=["Uploads"])
-app.include_router(chat.router)
+app.include_router(chat.router, prefix="/api/chat", tags=["Chat"]) # Added prefix for consistency
 
 @app.get("/")
 def root():
