@@ -20,7 +20,7 @@ export const API_BASE = (() => {
     return 'http://localhost:8000/api';
   }
 
-  // Production (Vercel or any other host)
+  // Production (Vercel)
   return 'https://cottonstreet-3.onrender.com/api';
 })();
 
@@ -62,7 +62,8 @@ export async function fetchCategories() {
 
 export async function fetchProducts() {
   try {
-    return await fetchWithRetry(`${API_BASE}/products?in_stock=all`);
+    // Fetch all products for admin (no in_stock filter)
+    return await fetchWithRetry(`${API_BASE}/products`);
   } catch (err) {
     console.error('❌ Failed to fetch products after retries:', err);
     return [];
