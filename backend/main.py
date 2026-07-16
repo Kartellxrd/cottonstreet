@@ -30,7 +30,7 @@ allowed_origins = os.getenv("FRONTEND_URL", "").split(",") if os.getenv("FRONTEN
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if allowed_origins else ["https://your-frontend-url.vercel.app"],
+    allow_origins=allowed_origins if allowed_origins else ["https://cottonstreet-47mv.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
