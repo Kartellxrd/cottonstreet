@@ -7,3 +7,5 @@ cloudinary
 python-multipart
 python-jose[cryptography]
 httpx>=0.25.0
+passlib
+bcrypt
