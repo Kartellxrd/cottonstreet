@@ -126,13 +126,21 @@
     <button class="btn" id="loginBtn" onclick="login()">LOGIN TO ADMIN</button>
   </div>
 </div>
-
 <script>
 const API = (() => {
   const host = window.location.hostname;
-  if (host.endsWith('.app.github.dev')) {
+
+  // 1. If we are on the live Vercel app, use the production Render URL
+  if (host !== 'localhost' && host !== '127.0.0.1' && !host.includes('.app.github.dev')) {
+    return 'https://cottonstreet-3.onrender.com/api';
+  }
+
+  // 2. Check for Codespace preview links
+  if (host.includes('.app.github.dev')) {
     return `${window.location.protocol}//${host.replace(/-\d+\.app\.github\.dev$/, '-8000.app.github.dev')}/api`;
   }
+
+  // 3. Fallback for local development
   return 'http://localhost:8000/api';
 })();
 
@@ -144,18 +152,23 @@ async function login() {
   const password = document.getElementById('password').value;
   const btn = document.getElementById('loginBtn');
   const err = document.getElementById('error');
+  
   err.style.display = 'none';
   if (!email || !password) { showError('Please fill in all fields'); return; }
+  
   btn.disabled = true;
   btn.textContent = 'SIGNING IN...';
+  
   try {
     const res = await fetch(`${API}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
+    
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Login failed');
+    
     localStorage.setItem('cs_token', data.access_token);
     window.location.href = 'products.html';
   } catch (e) {
