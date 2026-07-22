@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cotton Street — Apparel & Electronics · Gaborone</title>
   <meta name="description" content="Gaborone's go-to destination for premium streetwear, sneakers and the latest iPhones. Free delivery in Gaborone.">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 
@@ -55,8 +55,19 @@
       BAG
       <span class="bag-count" id="bagCount">0</span>
     </button>
+    <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile nav panel (shown via hamburger on small screens) -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+<div class="mobile-nav-panel" id="mobileNavPanel">
+  <a href="#shop">Shop</a>
+  <a href="#drops">Drops</a>
+  <a href="#order">Order</a>
+</div>
 
 <!-- ===== HERO ===== -->
 <section class="hero" style="padding:0">

@@ -664,3 +664,183 @@ footer { background: #050505; padding: 80px 60px 40px; border-top: 1px solid rgb
   .products-header { flex-direction: column; }
   .chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 88px; }
 }
+/* =========================================================
+   Cotton Street — Refined Mobile Fixes
+   ========================================================= */
+
+@media (max-width: 900px) {
+  /* Navigation adjustments */
+  nav { 
+    padding: 12px 16px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Hide standard desktop links if no burger menu is active yet */
+  .nav-links { 
+    display: none; 
+  }
+
+  /* Hero Section Mobile Fix */
+  .hero { 
+    grid-template-columns: 1fr; 
+    min-height: auto; 
+    padding-top: 20px;
+  }
+  
+  .hero-right { 
+    display: none; /* Keeps mobile fast and prevents ugly image crushing */
+  }
+  
+  .hero-left { 
+    padding: 30px 20px; 
+    text-align: center; 
+    align-items: center; 
+  }
+
+  .hero-title {
+    font-size: 42px; /* Scales down massive desktop text to fit mobile screens safely */
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .hero-sub { 
+    max-width: 100%; 
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .hero-cta { 
+    justify-content: center; 
+    flex-direction: column; /* Stacks buttons neatly instead of cutting off */
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-cta a, .hero-cta button {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Grid adjustments for products */
+  .product-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 12px; 
+    padding: 0 16px;
+  }
+  
+  .bag-drawer { 
+    width: 100%; 
+    right: -100%; 
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid { 
+    grid-template-columns: 1fr; /* Single column layout for very compact phones */
+  }
+}
+
+/* =========================================================
+   Cotton Street — Mobile Fix v2
+   (hamburger nav, right-sized hero type, hero image restored)
+   ========================================================= */
+
+/* ---- Hamburger toggle (hidden on desktop) ---- */
+.nav-burger {
+  display: none;
+  background: none; border: none; color: var(--white);
+  width: 36px; height: 36px; padding: 0; cursor: pointer;
+  flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+}
+.nav-burger span {
+  display: block; width: 22px; height: 2px; background: var(--white);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-nav-panel {
+  position: fixed; top: 0; right: -100%; width: 78%; max-width: 320px; height: 100vh;
+  background: var(--grey); z-index: 1500;
+  border-left: 1px solid rgba(200,169,110,0.15);
+  padding: 90px 32px 32px;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.mobile-nav-panel.open { right: 0; }
+.mobile-nav-panel a {
+  color: var(--white); text-decoration: none;
+  font-family: 'Bebas Neue', cursive; font-size: 28px; letter-spacing: 2px;
+  padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mobile-nav-panel a:active { color: var(--accent); }
+.mobile-nav-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1499;
+  display: none; backdrop-filter: blur(4px);
+}
+.mobile-nav-overlay.open { display: block; }
+
+@media (max-width: 900px) {
+  .nav-burger { display: flex; }
+
+  /* ---- Right-sized hero title ---- */
+  .hero-title {
+    font-size: clamp(34px, 11vw, 48px);
+    line-height: 1.05;
+  }
+  .hero-tag { font-size: 10px; letter-spacing: 3px; }
+  .hero-sub { font-size: 13.5px; }
+
+  /* ---- De-clutter the two hero CTAs: one clear primary action ---- */
+  .hero-cta { gap: 10px; }
+  .hero-cta .btn-primary { padding: 15px 32px; }
+  .hero-cta .btn-outline {
+    background: none; border: none; padding: 6px;
+    text-decoration: underline; text-underline-offset: 3px;
+    color: var(--light); font-size: 11px; letter-spacing: 1.5px;
+  }
+  .hero-cta .btn-outline:hover { color: var(--accent); }
+
+  /* ---- Side-by-side hero on mobile too: text on the left, image on the right ---- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    min-height: auto;
+    align-items: stretch;
+  }
+  .hero-left {
+    padding: 24px 14px 24px 16px;
+    text-align: left;
+    align-items: flex-start;
+    order: 0;
+  }
+  .hero-right {
+    display: block;
+    position: relative;
+    order: 0;
+    min-height: 100%;
+  }
+  .hero-img-main { filter: brightness(0.7) contrast(1.1); }
+  .hero-overlay { background: linear-gradient(160deg, rgba(10,10,10,0.55) 0%, transparent 65%); }
+
+  /* Smaller type + left-aligned CTAs so both columns fit a phone width */
+  .hero-title { font-size: clamp(22px, 7.5vw, 32px); letter-spacing: 1px; }
+  .hero-tag { font-size: 9px; letter-spacing: 2px; }
+  .hero-sub { font-size: 12.5px; max-width: 100%; margin-top: 16px; }
+  .hero-cta { align-items: flex-start; margin-top: 24px; }
+  .hero-cta a, .hero-cta button { width: 100%; }
+
+  /* ---- "Products in stock" badge floats near the chat bubble, bottom-right of the screen ---- */
+  .hero-badge {
+    position: fixed;
+    bottom: 92px; right: 16px; left: auto; top: auto;
+    z-index: 2900;
+    padding: 10px 14px;
+    background: rgba(10,10,10,0.88);
+  }
+  .hero-badge .num { font-size: 20px; }
+  .hero-badge .lbl { font-size: 7px; letter-spacing: 1px; }
+}
