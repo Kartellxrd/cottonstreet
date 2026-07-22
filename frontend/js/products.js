@@ -4,7 +4,7 @@
 
 import { fetchCategories, fetchProducts } from './api.js';
 import { addItem } from './store.js';
-import { showToast } from './main.js';
+import { showToast, toggleBag } from './main.js';
 
 const CATEGORY_LABELS = {
   'apparel':               'CLOTHING',
@@ -21,7 +21,6 @@ let _search     = '';
 /* ---- Public init ---- */
 
 export async function initProducts() {
-  // Load products first so when categories render, they can instantly read product counts
   await loadProducts();
   await loadCategories();
 }
@@ -31,8 +30,6 @@ export async function initProducts() {
 async function loadCategories() {
   try {
     const data = await fetchCategories();
-    
-    // Safeguard against API data wrapping variations
     if (Array.isArray(data)) {
       _categories = data;
     } else if (data && Array.isArray(data.data)) {
@@ -53,7 +50,6 @@ async function loadProducts() {
   setGridState('loading');
   try {
     const data = await fetchProducts({ inStock: true });
-    
     if (Array.isArray(data)) {
       _products = data;
     } else if (data && Array.isArray(data.data)) {
@@ -123,7 +119,6 @@ function renderCategoryCards() {
   }
 
   grid.innerHTML = _categories.map(c => {
-    // Safe property navigation preventing null runtime exceptions
     const count = _products.filter(p => {
       if (!p) return false;
       const matchSlug = p.categories && p.categories.slug === c.slug;
@@ -134,7 +129,7 @@ function renderCategoryCards() {
     const label = CATEGORY_LABELS[c.slug] || c.name.toUpperCase();
 
     return `
-    <div class="cat-card" data-cat="${esc(c.slug)}">
+    <div class="cat-card" data-cat="${esc(c.slug)}" style="cursor: pointer;">
       <div class="cat-accent-bar"></div>
       <div class="cat-watermark">${esc(label)}</div>
       <div class="cat-info">
@@ -206,7 +201,7 @@ export function renderProducts() {
         ${imgHtml}
         ${stockBadge}
         ${p.in_stock
-          ? `<button class="product-quick" data-id="${p.id}">+ ADD TO BAG</button>`
+          ? `<button class="product-quick" data-id="${p.id}" style="cursor: pointer;">+ ADD TO BAG</button>`
           : `<div class="product-quick disabled">SOLD OUT</div>`
         }
       </div>
@@ -221,6 +216,7 @@ export function renderProducts() {
     </div>`;
   }).join('');
 
+  // Add event listener to triggers: adds item & opens bag drawer automatically
   grid.querySelectorAll('.product-quick[data-id]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -235,6 +231,7 @@ export function renderProducts() {
         img:     prod.image_url,
       });
       showToast(`${prod.name} added to bag 🔥`);
+      toggleBag(); // Open bag drawer automatically upon adding item
     });
   });
 }
@@ -282,7 +279,6 @@ export function getProducts() {
   return _products || [];
 }
 
-// Global hook resolution window registration for main.js search operations
 window.__csProducts = {
   setFilter,
   setSearch

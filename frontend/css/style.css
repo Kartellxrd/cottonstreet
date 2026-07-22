@@ -384,23 +384,23 @@ section { padding: 90px 60px; width: 100%; }
   color: var(--light); font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 1px;
 }
 
-/* ===== WHATSAPP SECTION ===== */
+/* ===== HOW IT WORKS / CATALOG FLOW (Updated Section) ===== */
 .wa-section {
-  background: #0a2010; display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--grey); display: grid; grid-template-columns: 1fr 1fr;
   gap: 60px; align-items: center; padding: 90px 60px;
   border-top: 1px solid rgba(200,169,110,0.1); border-bottom: 1px solid rgba(200,169,110,0.1);
   width: 100%;
 }
 .wa-section p { color: var(--light); font-size: 15px; line-height: 1.8; margin-bottom: 28px; }
-.wa-mockup { background: #111; border-radius: 12px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 100%; }
-.wa-header { background: #128C7E; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
-.wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', cursive; font-size: 16px; color: white; flex-shrink: 0; }
-.wa-title { font-weight: 600; font-size: 13px; }
-.wa-status { font-size: 11px; color: rgba(255,255,255,0.7); }
-.wa-body { background: #0d1117; padding: 18px; min-height: 200px; display: flex; flex-direction: column; gap: 10px; }
-.wa-msg { background: #1e3a2b; border-radius: 0 12px 12px 12px; padding: 12px 16px; max-width: 90%; font-size: 13px; line-height: 1.6; color: #e0ffe8; border-left: 3px solid #25D366; }
-.wa-msg strong { color: #25D366; display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; }
-.wa-time { font-size: 10px; color: var(--light); text-align: right; margin-top: 4px; }
+.wa-mockup { background: #111; border: 1px solid rgba(200,169,110,0.2); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 100%; }
+.wa-header { background: var(--accent); color: var(--black); padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+.wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--black); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', cursive; font-size: 16px; color: var(--accent); flex-shrink: 0; }
+.wa-title { font-weight: 700; font-size: 13px; letter-spacing: 1px; font-family: 'Space Mono', monospace; text-transform: uppercase; }
+.wa-status { font-size: 11px; color: rgba(0,0,0,0.7); }
+.wa-body { background: #0a0a0a; padding: 18px; min-height: 200px; display: flex; flex-direction: column; gap: 10px; }
+.wa-msg { background: rgba(200,169,110,0.06); border-radius: 0 12px 12px 12px; padding: 14px 16px; max-width: 95%; font-size: 13px; line-height: 1.6; color: var(--white); border-left: 3px solid var(--accent); }
+.wa-msg strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; font-family: 'Space Mono', monospace; }
+.wa-time { font-size: 10px; color: var(--light); text-align: right; margin-top: 8px; font-family: 'Space Mono', monospace; }
 
 /* ===== STATS ===== */
 .stats-row { background: var(--cream); display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; }
@@ -412,15 +412,15 @@ section { padding: 90px 60px; width: 100%; }
 
 /* ===== ORDER FORM ===== */
 .order-section {
-  background: var(--grey); display: grid; grid-template-columns: 1fr 1.1fr;
+  background: var(--black); display: grid; grid-template-columns: 1fr 1.1fr;
   gap: 60px; align-items: start; padding: 90px 60px;
   width: 100%;
 }
 .order-info p { color: var(--light); line-height: 1.8; margin-bottom: 24px; font-size: 15px; }
 .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 .benefit-list li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--light); }
-.benefit-list li::before { content: '✓'; color: #25D366; font-weight: 700; font-size: 15px; flex-shrink: 0; }
-.order-form { background: rgba(255,255,255,0.03); border: 1px solid rgba(200,169,110,0.2); padding: 40px 36px; width: 100%; }
+.benefit-list li::before { content: '✓'; color: var(--accent); font-weight: 700; font-size: 15px; flex-shrink: 0; }
+.order-form { background: var(--grey); border: 1px solid rgba(200,169,110,0.2); padding: 40px 36px; width: 100%; }
 .form-title { font-family: 'Bebas Neue', cursive; font-size: 26px; letter-spacing: 2px; margin-bottom: 28px; color: var(--accent); }
 .form-group { margin-bottom: 18px; width: 100%; }
 .form-group label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); font-family: 'Space Mono', monospace; margin-bottom: 6px; }
@@ -434,13 +434,13 @@ section { padding: 90px 60px; width: 100%; }
 .form-group textarea { min-height: 80px; resize: vertical; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
 .submit-btn {
-  width: 100%; background: #25D366; color: white; border: none; padding: 16px;
+  width: 100%; background: var(--accent); color: var(--black); border: none; padding: 16px;
   font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 3px;
   text-transform: uppercase; font-weight: 700; cursor: pointer;
   transition: background 0.2s, transform 0.2s; margin-top: 6px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
 }
-.submit-btn:hover { background: #128C7E; transform: translateY(-1px); }
+.submit-btn:hover { background: var(--white); transform: translateY(-1px); }
 .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ===== BAG DRAWER ===== */
@@ -462,12 +462,12 @@ section { padding: 90px 60px; width: 100%; }
 .bag-total { display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; font-size: 14px; margin-bottom: 16px; }
 .bag-total .total-num { color: var(--accent); font-size: 18px; }
 .checkout-btn {
-  width: 100%; background: #25D366; color: white; border: none; padding: 16px;
+  width: 100%; background: var(--accent); color: var(--black); border: none; padding: 16px;
   font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 3px;
   text-transform: uppercase; font-weight: 700; cursor: pointer;
   transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.checkout-btn:hover { background: #128C7E; }
+.checkout-btn:hover { background: var(--white); }
 
 /* ===== FOOTER ===== */
 footer { background: #050505; padding: 70px 60px 30px; border-top: 1px solid rgba(200,169,110,0.1); width: 100%; }

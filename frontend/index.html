@@ -3,313 +3,334 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cotton Street — Apparel & Electronics · Gaborone</title>
-  <meta name="description" content="Gaborone's go-to destination for premium streetwear, sneakers and the latest iPhones. Free delivery in Gaborone.">
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <title>Cotton Street — Urban Streetwear & Electronics</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- Custom cursor (hidden on touch devices via CSS) -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="#" class="nav-logo">Cotton<span>Street</span></a>
+    <ul class="nav-links">
+      <li><a href="#catalog">Catalog</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#order">Order &amp; Custom</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="bag-btn" id="bagBtn">
+        Bag <span class="bag-count" id="bagCount">0</span>
+      </button>
+      <button class="nav-burger" id="navBurger" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
 
-<!-- Bag overlay -->
-<div class="bag-overlay" id="bagOverlay"></div>
-
-<!-- ===== BAG DRAWER ===== -->
-<div class="bag-drawer" id="bagDrawer">
-  <div class="bag-header">
-    <h3>YOUR BAG</h3>
-    <button class="close-btn" onclick="toggleBag()" aria-label="Close bag">✕</button>
-  </div>
-  <div class="bag-items" id="bagItems">
-    <div class="bag-empty">
-      <div class="big">EMPTY</div>
-      Add items to your bag
+  <!-- MOBILE NAVIGATION OVERLAY & PANEL -->
+  <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <div class="mobile-nav-header">
+      <a href="#" class="nav-logo">Cotton<span>Street</span></a>
+      <button class="close-btn" id="mobileNavClose">&times;</button>
+    </div>
+    <div class="mobile-nav-links">
+      <a href="#catalog" class="mob-link">Catalog</a>
+      <a href="#how-it-works" class="mob-link">How It Works</a>
+      <a href="#order" class="mob-link">Order &amp; Custom</a>
+    </div>
+    <div class="mobile-nav-footer">
+      <span>Gaborone, Botswana</span>
+      <a href="#order">Secure Drop</a>
     </div>
   </div>
-  <div class="bag-footer" id="bagFooter" style="display:none">
-    <div class="bag-total">
-      <span>TOTAL</span>
-      <span class="total-num" id="bagTotal">P0</span>
+
+  <!-- HERO SECTION -->
+  <header class="hero">
+    <div class="hero-left">
+      <span class="hero-tag">[ LIMITED URBAN DROPS ]</span>
+      <h1 class="hero-title">
+        PREMIUM <span class="outline">STREETWEAR</span> &amp; <span class="gold">TECH.</span>
+      </h1>
+      <p class="hero-sub">
+        Curated high-end urban apparel, exclusive footwear, and cutting-edge electronics delivered straight to your doorstep.
+      </p>
+      <div class="hero-cta">
+        <a href="#catalog" class="btn-primary">Explore Drops</a>
+        <a href="#order" class="btn-outline">Custom Inquiry</a>
+      </div>
     </div>
-    <button class="checkout-btn" onclick="goToCheckout()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-      </svg>
-      CHECKOUT VIA WHATSAPP
-    </button>
-  </div>
-</div>
+    <div class="hero-right">
+      <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?w=900&q=80" alt="Streetwear Shoe Hero" class="hero-img-main">
+      <div class="hero-overlay"></div>
+      <div class="hero-badge">
+        <div class="num">01</div>
+        <div class="lbl">Current Drop</div>
+      </div>
+    </div>
+  </header>
 
-<!-- ===== NAV ===== -->
-<nav>
-  <a href="#" class="nav-logo">Cotton<span>Street</span></a>
-  <ul class="nav-links">
-    <li><a href="#shop">Shop</a></li>
-    <li><a href="#drops">Drops</a></li>
-    <li><a href="#order">Order</a></li>
-  </ul>
-  <div class="nav-right">
-    <button class="bag-btn" onclick="toggleBag()" aria-label="Open bag">
-      BAG
-      <span class="bag-count" id="bagCount">0</span>
-    </button>
-    <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<!-- Mobile nav panel (shown via hamburger on small screens) -->
-<div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
-<div class="mobile-nav-panel" id="mobileNavPanel">
-  <a href="#shop">Shop</a>
-  <a href="#drops">Drops</a>
-  <a href="#order">Order</a>
-</div>
-
-<!-- ===== HERO ===== -->
-<section class="hero" style="padding:0">
-  <div class="hero-left">
-    <div class="hero-tag">Gaborone's Finest</div>
-    <h1 class="hero-title">
-      COTTON<br>
-      <span class="outline">STREET</span><br>
-      <span class="gold">DROP.</span>
-    </h1>
-    <p class="hero-sub">Premium streetwear, sneakers and the latest iPhones — delivered straight to your door. No DMs, no waiting. Just click and cop.</p>
-    <div class="hero-cta">
-      <a href="#shop" class="btn-primary">Shop Now</a>
-      <a href="#drops" class="btn-outline">Explore Drops</a>
+  <!-- MOVING TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">PREMIUM URBAN WEAR</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">EXCLUSIVE ELECTRONICS</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">LIMITED RUN DROPS</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">EXPRESS DELIVERY</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">PREMIUM URBAN WEAR</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">EXCLUSIVE ELECTRONICS</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">LIMITED RUN DROPS</span> <span class="ticker-dot">•</span>
+      <span class="ticker-item">EXPRESS DELIVERY</span> <span class="ticker-dot">•</span>
     </div>
   </div>
-  <div class="hero-right">
-    <img class="hero-img-main" src="https://images.unsplash.com/photo-1552346154-21d32810aba3?w=900&q=80" alt="Streetwear hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-badge">
-      <div class="num" id="heroProductCount">—</div>
-      <div class="lbl">Products In Stock</div>
+
+  <!-- CATEGORIES SECTION (Image-backed Cards) -->
+  <section class="categories" id="categories">
+    <div class="section-label">[ EXPLORE COLLECTIONS ]</div>
+    <h2 class="section-title">SHOP BY CATEGORY</h2>
+    <div class="cat-grid" id="catGrid">
+      <div class="cat-card" data-cat="apparel">
+        <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80" alt="Apparel" class="cat-bg-img">
+        <div class="cat-info">
+          <div class="cat-name">Apparel</div>
+          <div class="cat-count">Hoodies, Tees &amp; Jackets</div>
+        </div>
+      </div>
+      <div class="cat-card" data-cat="electronics">
+        <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80" alt="Electronics" class="cat-bg-img">
+        <div class="cat-info">
+          <div class="cat-name">Electronics</div>
+          <div class="cat-count">Gadgets &amp; Audio</div>
+        </div>
+      </div>
+      <div class="cat-card" data-cat="footwear-accessories">
+        <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80" alt="Footwear" class="cat-bg-img">
+        <div class="cat-info">
+          <div class="cat-name">Footwear &amp; Gear</div>
+          <div class="cat-count">Kicks &amp; Carry</div>
+        </div>
+      </div>
+      <div class="cat-card" data-cat="sportswear">
+        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80" alt="Sportswear" class="cat-bg-img">
+        <div class="cat-info">
+          <div class="cat-name">Sportswear</div>
+          <div class="cat-count">Performance &amp; Street</div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== TICKER ===== -->
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-inner">
-    <span class="ticker-item">STREETWEAR <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">SNEAKERS <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">JERSEYS <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">iPHONES <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">FREE DELIVERY GABORONE <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">COTTON STREET <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">STREETWEAR <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">SNEAKERS <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">JERSEYS <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">iPHONES <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">FREE DELIVERY GABORONE <span class="ticker-dot">●</span></span>
-    <span class="ticker-item">COTTON STREET <span class="ticker-dot">●</span></span>
-  </div>
-</div>
-
-<!-- ===== CATEGORIES ===== -->
-<div class="categories" id="shop">
-  <p class="section-label">Browse By Category</p>
-  <div class="cat-grid" id="catGrid">
-    <div class="loading-state">Loading categories…</div>
-  </div>
-</div>
-
-<!-- ===== PRODUCTS ===== -->
-<section class="products" id="drops">
-  <div class="products-header">
-    <div>
-      <p class="section-label">New Arrivals</p>
-      <h2 class="section-title">FRESH<br>DROPS</h2>
-    </div>
-    <div>
-      <div class="search-wrap" style="margin-bottom:16px">
-        <input type="search" id="productSearch" placeholder="Search products…" aria-label="Search products">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
+  <!-- PRODUCTS SECTION -->
+  <section class="products" id="catalog">
+    <div class="products-header">
+      <div>
+        <div class="section-label">[ LIVE INVENTORY ]</div>
+        <h2 class="section-title">FEATURED DROPS</h2>
       </div>
       <div class="filter-tabs" id="filterTabs">
-        <button class="tab active" data-cat="all">All</button>
+        <button class="tab active" data-filter="all">All Items</button>
+        <button class="tab" data-filter="apparel">Apparel</button>
+        <button class="tab" data-filter="electronics">Electronics</button>
+        <button class="tab" data-filter="footwear-accessories">Footwear</button>
+        <button class="tab" data-filter="sportswear">Sportswear</button>
       </div>
     </div>
-  </div>
-  <div class="product-grid" id="productGrid">
-    <div class="loading-state">Loading products…</div>
-  </div>
-</section>
 
-<!-- ===== HOW IT WORKS (Catalog Flow) ===== -->
-<div class="wa-section">
-  <div>
-    <p class="section-label">How It Works</p>
-    <h2 class="section-title">ORDER IN<br>60 SECONDS</h2>
-    <p>No more back-and-forth in DMs. Add items to your bag, fill in your details, and a fully formatted order is sent straight to our system — ready to confirm and dispatch.</p>
-    <ul class="benefit-list">
-      <li>Browse & add items to your bag</li>
-      <li>Enter your name, phone & delivery town</li>
-      <li>Hit order — receive a streamlined digital invoice</li>
-      <li>We confirm and arrange delivery</li>
-    </ul>
-  </div>
-  <div class="wa-mockup" aria-hidden="true">
-    <div class="wa-header">
-      <div class="wa-avatar">CS</div>
-      <div>
-        <div class="wa-title">Cotton Street Orders</div>
-        <div class="wa-status">Online</div>
+    <!-- Search Bar Filter -->
+    <div style="margin-bottom: 30px;">
+      <div class="search-wrap">
+        <input type="text" id="productSearch" placeholder="Search items or gear...">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </div>
     </div>
-    <div class="wa-body">
-      <div class="wa-msg">
-        <strong>🛒 NEW CATALOG ORDER</strong>
-        1× iPhone 15 Pro (Black, 256GB)<br>
-        1× CS Heavyweight Hoodie (L)<br>
-        1× Air Jordan 1 Retro (Size 10)<br><br>
-        <strong>📦 DELIVERY</strong>
-        Thabo Molefe · +267 71 234 567<br>
-        Gaborone — Block 8<br><br>
-        <strong>💰 TOTAL: P18,650</strong>
-        <div class="wa-time">Just now ✓✓</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- ===== STATS ===== -->
-<div class="stats-row">
-  <div class="stat-item">
-    <div class="stat-num">4<span class="stat-unit">K+</span></div>
-    <div class="stat-label">Instagram Followers</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num" id="statProductCount">—</div>
-    <div class="stat-label">Products Available</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">24<span class="stat-unit">hr</span></div>
-    <div class="stat-label">Gaborone Delivery</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">100<span class="stat-unit">%</span></div>
-    <div class="stat-label">Authentic Products</div>
-  </div>
-</div>
+    <!-- Product Grid Container -->
+    <div class="product-grid" id="productGrid">
+      <div class="loading-state">Loading inventory feeds...</div>
+    </div>
+  </section>
 
-<!-- ===== ORDER FORM ===== -->
-<div class="order-section" id="order">
-  <div class="order-info">
-    <p class="section-label">Place Your Order</p>
-    <h2 class="section-title">LET'S<br>GET IT<br>DONE.</h2>
-    <p>Fill in your details and your order goes directly through our automated catalog flow. Simple, fast, no confusion.</p>
-    <ul class="benefit-list">
-      <li>Instant order confirmation</li>
-      <li>Delivery across Botswana</li>
-      <li>100% authentic products</li>
-      <li>Cash on delivery — no card needed</li>
-    </ul>
-  </div>
-  <div class="order-form">
-    <div class="form-title">QUICK ORDER FORM</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="fname">First Name</label>
-        <input type="text" id="fname" placeholder="Thabo" autocomplete="given-name">
-      </div>
-      <div class="form-group">
-        <label for="lname">Last Name</label>
-        <input type="text" id="lname" placeholder="Molefe" autocomplete="family-name">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" placeholder="+267 71 234 567" autocomplete="tel">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="town">Town / City</label>
-        <select id="town">
-          <option value="">Select Town</option>
-          <option>Gaborone</option>
-          <option>Francistown</option>
-          <option>Maun</option>
-          <option>Serowe</option>
-          <option>Kanye</option>
-          <option>Molepolole</option>
-          <option>Palapye</option>
-          <option>Lobatse</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="productInterest">Product Interest</label>
-      <select id="productInterest">
-         <option value="">Loading categories...</option>
-      </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="notes">Order Notes (optional)</label>
-      <textarea id="notes" placeholder="e.g. iPhone 15 Pro 256GB Black, Size L Hoodie…"></textarea>
-    </div>
-    <button class="submit-btn" id="submitBtn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-      </svg>
-      SUBMIT ORDER
-    </button>
-  </div>
-</div>
-
-<!-- ===== FOOTER ===== -->
-<footer>
-  <div class="footer-top">
-    <div class="footer-brand">
-      <a href="#" class="nav-logo">Cotton<span>Street</span></a>
-      <p>Gaborone's go-to destination for premium streetwear, sneakers and the latest iPhones. Real products. Real people. Real fast delivery.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Shop</h4>
-      <ul id="footerShopLinks">
-        <li><a href="#shop">All Categories</a></li>
+  <!-- HOW IT WORKS SECTION -->
+  <section class="wa-section" id="how-it-works">
+    <div>
+      <div class="section-label">[ STREAMLINED EXPERIENCE ]</div>
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <p>
+        Browse our verified collections online, check real-time stock availability, and secure your order directly through our automated processing pipeline. Fast fulfillment with zero friction.
+      </p>
+      <ul class="benefit-list">
+        <li>Direct integration with live warehouse inventory</li>
+        <li>Instant automated order confirmation</li>
+        <li>Secure local delivery tracking across Botswana</li>
       </ul>
     </div>
-    <div class="footer-col">
-      <h4>Info</h4>
-      <ul>
-        <li><a href="#order">Delivery Info</a></li>
-        <li><a href="#order">Returns Policy</a></li>
-        <li><a href="#order">FAQ</a></li>
-      </ul>
+    <div>
+      <div class="wa-mockup">
+        <div class="wa-header">
+          <div class="wa-avatar">CS</div>
+          <div>
+            <div class="wa-title">Cotton Street Bot</div>
+            <div class="wa-status">Online &bull; Ready to process</div>
+          </div>
+        </div>
+        <div class="wa-body">
+          <div class="wa-msg">
+            <strong>System Notification</strong>
+            New drop order received. Processing automated payment and dispatch protocols for regional logistics.
+            <div class="wa-time">Just now</div>
+          </div>
+          <div class="wa-msg">
+            <strong>Inventory Status</strong>
+            Stock synchronized successfully with Supabase backend cluster. All items verified.
+            <div class="wa-time">Verified</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="footer-col">
-      <h4>Contact</h4>
-      <ul>
-        <li><a href="#order">Get in Touch</a></li>
-        <li><a href="https://instagram.com/_cottonstreet_apparel" target="_blank" rel="noopener">@_cottonstreet_apparel</a></li>
-        <li><a href="#">Gaborone, BW</a></li>
-      </ul>
+  </section>
+
+  <!-- STATS COUNTER -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num">100<span class="stat-unit">%</span></div>
+      <div class="stat-label">Verified Authentic</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24<span class="stat-unit">h</span></div>
+      <div class="stat-label">Order Processing</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">500<span class="stat-unit">+</span></div>
+      <div class="stat-label">Successful Drops</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5<span class="stat-unit">★</span></div>
+      <div class="stat-label">Customer Rating</div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <span>© 2026 Cotton Street. All rights reserved.</span>
-    <div class="social-links">
-      <a href="https://instagram.com/_cottonstreet_apparel" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
-      <a href="#order" aria-label="Contact">CS</a>
+
+  <!-- ORDER / CUSTOM REQUEST SECTION -->
+  <section class="order-section" id="order">
+    <div class="order-info">
+      <div class="section-label">[ SECURE CHECKOUT ]</div>
+      <h2 class="section-title">PLACE AN ORDER OR REQUEST DROP</h2>
+      <p>
+        Can't find a specific piece or want to place a custom reservation? Fill out the order form and our system will log your inquiry for instant fulfillment confirmation.
+      </p>
+      <ul class="benefit-list">
+        <li>Guaranteed allocation on limited inventory runs</li>
+        <li>Direct customer support updates</li>
+        <li>Priority handling for local deliveries</li>
+      </ul>
+    </div>
+    <div class="order-form">
+      <div class="form-title">Order Dispatch Form</div>
+      <form id="orderForm" onsubmit="event.preventDefault();">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" required placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" required placeholder="Last Name">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" required placeholder="+267 ...">
+          </div>
+          <div class="form-group">
+            <label for="town">Delivery Town</label>
+            <select id="town" required>
+              <option value="" disabled selected>Select Town</option>
+              <option value="Gaborone">Gaborone</option>
+              <option value="Francistown">Francistown</option>
+              <option value="Maun">Maun</option>
+              <option value="Palapye">Palapye</option>
+              <option value="Other">Other Botswana Region</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="productInterest">Category / Product Interest</label>
+          <select id="productInterest">
+            <option value="">Select Category</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes">Delivery Notes / Specific Request</label>
+          <textarea id="notes" placeholder="Street address, landmarks, delivery instructions..."></textarea>
+        </div>
+        <button type="button" class="submit-btn" id="submitBtn">
+          Confirm Order Dispatch
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- CART/BAG DRAWER -->
+  <div class="bag-overlay" id="bagOverlay"></div>
+  <div class="bag-drawer" id="bagDrawer">
+    <div class="bag-header">
+      <h3>Your Bag</h3>
+      <button class="close-btn" onclick="toggleBag()">&times;</button>
+    </div>
+    <div class="bag-items" id="bagItems">
+      <div class="bag-empty">
+        <div class="big">EMPTY</div>
+        Add items to your bag
+      </div>
+    </div>
+    <div class="bag-footer" id="bagFooter" style="display: none;">
+      <!-- Populated via main.js -->
     </div>
   </div>
-</footer>
 
-<!-- Toast notification -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">Cotton<span>Street</span></a>
+        <p>Premium urban streetwear and high-grade consumer electronics engineered for modern lifestyles.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#catalog">Catalog</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#order">Order Form</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="#catalog">Apparel</a></li>
+          <li><a href="#catalog">Electronics</a></li>
+          <li><a href="#catalog">Footwear</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <div class="social-links" style="margin-top: 10px;">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="Twitter">TW</a>
+          <a href="#" aria-label="WhatsApp">WA</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Cotton Street Apparel &amp; Electronics. All rights reserved.</div>
+      <div>Gaborone, Botswana</div>
+    </div>
+  </footer>
 
-<!-- ===== SCRIPTS (ES modules) ===== -->
-<script type="module" src="js/main.js"></script>
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast">Action completed successfully</div>
 
+  <!-- JS SCRIPT MODULE -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
