@@ -162,7 +162,7 @@ export function initCheckoutPage(containerId, orderData, onBack) {
             customer_name: orderData.customer_name,
             customer_phone: orderData.customer_phone,
             customer_town: orderData.customer_town,
-            items: orderData.items || [],
+            items: orderData.items || orderData.items_json || [],
             total: orderData.total,
             deposit: deposit,
             balance: balance,
@@ -288,17 +288,27 @@ export function initCheckoutPage(containerId, orderData, onBack) {
     btn.textContent = 'PROCESSING ORDER...';
 
     const generatedOrderRef = Math.floor(100000 + Math.random() * 900000).toString();
-    orderData.order_id = generatedOrderRef;
-    orderData.fulfillment = selectedFulfillmentType;
-    orderData.payment_method = selectedPaymentMethod;
-    orderData.notes = `[${selectedFulfillmentType.toUpperCase()}] [PAY: ${selectedPaymentMethod.toUpperCase()}] ${orderData.notes || ''}`;
-    orderData.deposit = deposit;
-    orderData.balance = balance;
+    
+    // Explicitly package payload ensuring items are passed under both aliases for backend compatibility
+    const payload = {
+      customer_name: orderData.customer_name,
+      customer_phone: orderData.customer_phone,
+      customer_town: orderData.customer_town,
+      items: orderData.items || orderData.items_json || [],
+      items_json: orderData.items || orderData.items_json || [],
+      total: orderData.total,
+      deposit: deposit,
+      balance: balance,
+      fulfillment: selectedFulfillmentType,
+      payment_method: selectedPaymentMethod,
+      notes: `[${selectedFulfillmentType.toUpperCase()}] [PAY: ${selectedPaymentMethod.toUpperCase()}] ${orderData.notes || ''}`
+    };
 
     try {
-      await submitOrder(orderData);
+      await submitOrder(payload);
       renderSuccessView(generatedOrderRef, 'orangemoney');
     } catch (err) {
+      console.error('Order submission failed:', err);
       alert('Order submission failed: ' + (err.message || 'Please try again.'));
       btn.disabled = false;
       btn.textContent = 'CONFIRM & SUBMIT ORDER';

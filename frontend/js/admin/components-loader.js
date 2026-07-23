@@ -24,9 +24,42 @@ export async function loadAdminComponents() {
     }
   }
 
-  // Load navbar and sidebar relative to the page location (using correct 'nav.html' file name)
+  // Load navbar and sidebar using 'components/nav.html'
   await fetchAndInsert('navbar-container', 'components/nav.html');
   await fetchAndInsert('sidebar-container', 'components/sidebar.html');
+
+  // Setup mobile toggle and backdrop behavior after elements are in DOM
+  setupMobileSidebar();
+}
+
+function setupMobileSidebar() {
+  const sidebar = document.getElementById('sidebar-container') || document.querySelector('aside');
+  
+  let backdrop = document.getElementById('sidebarBackdrop') || document.querySelector('.sidebar-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'sidebarBackdrop';
+    backdrop.className = 'sidebar-backdrop';
+    document.body.appendChild(backdrop);
+  }
+
+  if (sidebar) {
+    backdrop.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('show');
+      backdrop.classList.remove('active');
+    });
+
+    sidebar.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove('open');
+          backdrop.classList.remove('show');
+          backdrop.classList.remove('active');
+        }
+      });
+    });
+  }
 }
 
 window.logout = function() {
@@ -34,10 +67,14 @@ window.logout = function() {
   window.location.href = 'login.html';
 };
 
-// Mobile Sidebar Toggle Logic
+// Global toggle handler attached to the navbar toggle button
 window.toggleSidebar = function() {
-  const sidebar = document.getElementById('sidebar-container');
-  const backdrop = document.getElementById('sidebarBackdrop');
+  const sidebar = document.getElementById('sidebar-container') || document.querySelector('aside');
+  const backdrop = document.getElementById('sidebarBackdrop') || document.querySelector('.sidebar-backdrop');
+  
   if (sidebar) sidebar.classList.toggle('open');
-  if (backdrop) backdrop.classList.toggle('show');
+  if (backdrop) {
+    backdrop.classList.toggle('show');
+    backdrop.classList.toggle('active');
+  }
 };

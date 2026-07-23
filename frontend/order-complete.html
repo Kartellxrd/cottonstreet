@@ -156,11 +156,14 @@
         <a href="index.html" class="btn btn-outline" onclick="clearCartCompletely()">Store Home</a>
     </div>
 
-    <script>
+    <script type="module">
+        import { API_BASE } from './api.js';
+
         // Clear local storage bag immediately upon successful order landing
         function clearCartCompletely() {
             localStorage.removeItem('cart');
         }
+        window.clearCartCompletely = clearCartCompletely;
         clearCartCompletely();
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -175,7 +178,7 @@
             document.getElementById('sessionIdDisplay').innerText = sessionId;
 
             try {
-                const response = await fetch(`/verify-session/${sessionId}`);
+                const response = await fetch(`${API_BASE}/verify-session/${sessionId}`);
                 if (!response.ok) throw new Error("Verification failed");
                 
                 const data = await response.json();
@@ -191,17 +194,17 @@
         }
 
         // Trigger PDF generation using html2pdf
-        function downloadPDF() {
+        window.downloadPDF = function() {
             const element = document.getElementById('receiptToDownload');
             const options = {
                 margin:       10,
-                filename:     `CottonStreet-Receipt-${sessionId.slice(-8)}.pdf`,
+                filename:     `CottonStreet-Receipt-${sessionId ? sessionId.slice(-8) : 'unknown'}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#161616' },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             html2pdf().from(element).set(options).save();
-        }
+        };
 
         verifyAndLoadReceipt();
     </script>

@@ -68,19 +68,26 @@ export async function fetchProducts({ inStock = true, category = null } = {}) {
 /* ----- Orders ----- */
 
 export async function submitOrder(payload) {
-  try {
-    const res = await fetch(`${API_BASE}/orders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    
-    if (!res.ok) {
-      console.warn('Order logging returned non-OK:', res.status);
-    }
-    return res.ok;
-  } catch (err) {
-    console.error('❌ Order submission failed:', err);
-    return false;
+  const res = await fetch(`${API_BASE}/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      customer_name: payload.customer_name,
+      customer_phone: payload.customer_phone,
+      customer_town: payload.customer_town,
+      fulfillment: payload.fulfillment,
+      payment_method: payload.payment_method,
+      total: payload.total,
+      deposit: payload.deposit,
+      balance: payload.balance,
+      items_json: payload.items || payload.items_json || [], // Maps items correctly to FastAPI OrderCreate model
+      notes: payload.notes
+    }),
+  });
+  
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    throw new Error(errBody.detail || `Server error: ${res.status}`);
   }
+  return await res.json();
 }

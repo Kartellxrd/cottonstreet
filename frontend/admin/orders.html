@@ -19,59 +19,173 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
 
-  /* TOP NAVBAR */
-  nav, header#navbar-container {
-    background: var(--grey);
-    border-bottom: 1px solid rgba(200,169,110,0.15);
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .nav-brand { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--white); }
-  .nav-brand span { color: var(--accent); }
-  .nav-links-top { display: flex; gap: 24px; align-items: center; }
-  .btn-logout { background: none; border: 1px solid rgba(230,57,70,0.3); color: var(--accent2); padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
-  .btn-logout:hover { background: rgba(230,57,70,0.1); border-color: var(--accent2); }
-
-  /* APP SHELL LAYOUT */
-  .app-shell { display: flex; min-height: calc(100vh - 69px); }
-
-  /* SIDEBAR NAVIGATION */
-  #sidebar, #sidebar-container {
+  /* SIDEBAR */
+  aside {
     width: 260px;
     background: var(--grey);
-    border-right: 1px solid rgba(200,169,110,0.1);
+    border-right: 1px solid rgba(200,169,110,0.15);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex-shrink: 0;
-    height: calc(100vh - 69px);
-    position: sticky;
-    top: 69px;
+    position: fixed;
+    top: 69px; bottom: 0; left: 0;
+    z-index: 100;
+    transition: transform 0.3s ease;
   }
-  .sidebar-top { padding: 24px 0; }
-  .sidebar-top .brand { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; padding: 0 24px 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--light); }
-  .sidebar-top .brand span { color: var(--accent); }
-  .nav-menu { display: flex; flex-direction: column; gap: 4px; padding: 16px; }
+  .sidebar-top { padding: 24px 20px; }
+  .brand { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); margin-bottom: 32px; }
+  .brand span { color: var(--accent); }
+  
+  .nav-menu { display: flex; flex-direction: column; gap: 6px; }
   .nav-item {
-    padding: 12px 16px;
-    color: var(--light);
-    text-decoration: none;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; color: var(--light); text-decoration: none;
+    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1px;
+    border-radius: 4px; transition: 0.2s;
+  }
+  .nav-item:hover, .nav-item.active { background: var(--accent); color: var(--black); font-weight: bold; }
+  
+  .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+  .brand-card {
+    background: var(--black); border: 1px solid rgba(200,169,110,0.2);
+    padding: 16px; text-align: center; border-radius: 6px;
+  }
+  .brand-card img { width: 40px; margin-bottom: 8px; }
+  .brand-card h4 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--accent); letter-spacing: 1px; }
+  .brand-card p { font-size: 10px; color: var(--light); margin-top: 2px; }
+
+  /* TOP HEADER BAR */
+  header {
+    width: 100%;
+    background: var(--grey) !important;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.2) !important;
+    padding: 14px 32px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 110;
+    height: 69px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .nav-left-group, .nav-right-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: var(--mid);
+    border: 1px solid rgba(200, 169, 110, 0.3);
+    color: var(--accent);
+    width: 36px; height: 36px;
     border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
     transition: 0.2s;
   }
-  .nav-item:hover, .nav-item.active { background: rgba(200,169,110,0.08); color: var(--accent); }
-  .sidebar-footer { padding: 20px 24px; border-top: 1px solid rgba(255,255,255,0.05); }
-  .brand-card h4 { font-size: 12px; font-family: 'Space Mono', monospace; color: var(--white); margin-bottom: 2px; }
-  .brand-card p { font-size: 11px; color: var(--light); }
+  .menu-toggle:hover {
+    background: var(--accent);
+    color: var(--black);
+  }
 
-  /* WORKSPACE CONTAINER */
-  .page-container { flex: 1; padding: 32px; overflow-y: auto; height: calc(100vh - 69px); max-width: 1200px; }
+  .nav-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-location-badge {
+    background: rgba(200, 169, 110, 0.1);
+    border: 1px solid rgba(200, 169, 110, 0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+
+  .nav-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--light);
+  }
+
+  /* Live Status Pill */
+  .live-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(37, 211, 102, 0.08);
+    border: 1px solid rgba(37, 211, 102, 0.25);
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    background-color: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse-animation 2s infinite;
+  }
+
+  @keyframes pulse-animation {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--green); }
+    100% { transform: scale(0.95); opacity: 0.8; }
+  }
+
+  .status-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* Styled Logout Button */
+  .logout-btn {
+    background: rgba(230, 57, 70, 0.12);
+    border: 1px solid rgba(230, 57, 70, 0.4);
+    color: var(--accent2);
+    padding: 7px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+  }
+
+  .logout-btn:hover {
+    background: var(--accent2);
+    color: var(--white);
+    box-shadow: 0 0 12px rgba(230, 57, 70, 0.4);
+  }
+
+  /* APP SHELL & WORKSPACE */
+  .app-shell { 
+    display: flex; 
+    margin-top: 69px; 
+    margin-left: 260px; 
+    min-height: calc(100vh - 69px); 
+  }
+  .page-container { 
+    flex: 1; 
+    padding: 40px; 
+    overflow-y: auto; 
+    max-height: calc(100vh - 69px); 
+  }
 
   /* STATS */
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
@@ -97,7 +211,7 @@
   }
 
   /* FILTERS */
-  .filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
   .filter-btn {
     padding: 8px 18px;
     font-family: 'Space Mono', monospace;
@@ -115,6 +229,7 @@
     background: var(--accent);
     color: var(--black);
     border-color: var(--accent);
+    font-weight: bold;
   }
 
   /* ORDER CARDS */
@@ -193,31 +308,45 @@
 
   .empty-state { text-align: center; padding: 80px 20px; color: var(--light); font-family: 'Space Mono', monospace; font-size: 12px; }
 
-  .toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--accent); color: var(--black);
-    padding: 12px 24px; font-family: 'Space Mono', monospace;
-    font-size: 11px; letter-spacing: 2px; font-weight: 700;
-    z-index: 9000; transition: transform 0.3s; white-space: nowrap;
-    border-radius: 4px;
+  .toast { 
+    position: fixed; bottom: 32px; right: 32px; 
+    background: var(--grey); border: 1px solid var(--accent); 
+    color: var(--white); padding: 16px 24px; border-radius: 4px; 
+    font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    opacity: 0; transform: translateY(20px); transition: 0.3s; 
+    pointer-events: none; z-index: 1000; 
   }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE BACKDROP OVERLAY */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 95;
+  }
+  .sidebar-backdrop.active { display: block; }
 
   @media (max-width: 768px) {
-    .page-container { padding: 16px; }
+    aside { transform: translateX(-100%); top: 0; }
+    aside.open { transform: translateX(0); }
+    header, .app-shell { margin-left: 0; }
+    .menu-toggle { display: flex; }
+    header { padding: 12px 16px !important; }
+    .nav-title { display: none; }
+    .page-container { padding: 20px; }
     .stats { grid-template-columns: 1fr 1fr; }
-    #sidebar, #sidebar-container { display: none; }
   }
 </style>
 </head>
 <body>
 
-<!-- TOP NAVBAR CONTAINER -->
+<!-- DYNAMIC NAVBAR CONTAINER -->
 <header id="navbar-container"></header>
 
 <div class="app-shell">
-  <!-- SIDEBAR CONTAINER -->
+  <!-- DYNAMIC SIDEBAR CONTAINER -->
   <aside id="sidebar-container"></aside>
 
   <div class="page-container">
@@ -256,40 +385,9 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
-  window.logout = function() {
-    localStorage.removeItem('cs_token');
-    window.location.href = 'login.html';
-  };
-
-  // Component Loader Script
-  async function loadComponent(containerId, filePath) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    try {
-      const response = await fetch(filePath);
-      if (response.ok) {
-        container.innerHTML = await response.text();
-        
-        // Auto-highlight active sidebar item
-        if (containerId === 'sidebar-container') {
-          const currentFileName = window.location.pathname.split('/').pop() || 'index.html';
-          const activeLink = container.querySelector(`a[href="${currentFileName}"]`);
-          if (activeLink) {
-            container.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            activeLink.classList.add('active');
-          }
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to load component: ${filePath}`, error);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    loadComponent('navbar-container', 'components/navbar.html');
-    loadComponent('sidebar-container', 'components/sidebar.html');
-  });
+<script type="module">
+  import { loadAdminComponents } from '../js/admin/components-loader.js';
+  loadAdminComponents();
 </script>
 
 <script type="module">
