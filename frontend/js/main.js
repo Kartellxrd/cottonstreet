@@ -3,11 +3,10 @@
    ========================================================= */
 
 import { initProducts, setFilter } from './products.js';
-import { subscribe, getBag, removeItem, getTotal, getCount, clearBag } from './store.js';
-import { submitOrder } from './api.js';
+import { subscribe, getBag, removeItem, getTotal, getCount } from './store.js';
 import { initChatbot } from './chatbot.js';
-import { addToCart } from './cart.js';
-import { getProducts, getCategories } from './products.js';
+import { getCategories } from './products.js';
+import { initCheckoutPage } from './checkout.js'; // <--- Imports the dedicated checkout view module
 
 /* =========================================================
    BOOT
@@ -19,8 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initOrderForm();
   subscribe(renderBag); 
 
-  await initProducts(); // Wait for data to load
-  populateCategories(); // Now populate the dropdown
+  await initProducts(); 
+  populateCategories(); 
   initChatbot();
   initSearch();
 });
@@ -225,12 +224,9 @@ function goToCheckout() {
   if (!bag.length) { showToast('Your bag is empty!'); return; }
   closeBag();
   
-  // Transition trigger point for delivery/pickup modal and system checkout page
   const orderSection = document.getElementById('order');
   if (orderSection) {
     orderSection.scrollIntoView({ behavior: 'smooth' });
-  } else {
-    showToast('Redirecting to checkout flow...');
   }
 }
 
@@ -238,14 +234,14 @@ window.toggleBag = toggleBag;
 window.goToCheckout = goToCheckout;
 
 /* =========================================================
-   ORDER FORM
+   ORDER FORM & CHECKOUT TRANSITION
    ========================================================= */
 
 function initOrderForm() {
-  document.getElementById('submitBtn')?.addEventListener('click', submitDirectOrder);
+  document.getElementById('submitBtn')?.addEventListener('click', handleDispatchSubmission);
 }
 
-async function submitDirectOrder() {
+function handleDispatchSubmission() {
   const fname    = document.getElementById('fname')?.value.trim();
   const lname    = document.getElementById('lname')?.value.trim();
   const phone    = document.getElementById('phone')?.value.trim();
@@ -257,24 +253,31 @@ async function submitDirectOrder() {
     return;
   }
 
-  const submitBtn = document.getElementById('submitBtn');
-  if (submitBtn) submitBtn.disabled = true;
-
   const bag   = getBag();
   const total = getTotal();
 
-  await submitOrder({ 
-    customer_name: `${fname} ${lname}`, 
-    customer_phone: phone, 
-    customer_town: town, 
-    items_json: bag, 
-    total, 
-    notes 
-  });
+  const customerOrderData = {
+    customer_name: `${fname} ${lname}`,
+    customer_phone: phone,
+    customer_town: town,
+    items_json: bag,
+    total,
+    notes
+  };
 
-  clearBag();
-  if (submitBtn) submitBtn.disabled = false;
-  showToast('Order successfully placed!');
+  const orderSection = document.getElementById('order');
+  if (orderSection) {
+    const originalContent = orderSection.innerHTML;
+    orderSection.id = 'orderSectionWrapper';
+    
+    // Renders the separate checkout payment view module
+    initCheckoutPage('orderSectionWrapper', customerOrderData, () => {
+      orderSection.innerHTML = originalContent;
+      document.getElementById('orderSectionWrapper')?.setAttribute('id', 'order');
+      initOrderForm();
+      populateCategories();
+    });
+  }
 }
 
 /* =========================================================
@@ -297,17 +300,14 @@ function esc(str) {
 }
 
 function populateCategories() {
-    const select = document.getElementById('productInterest');
-    if (!select) return;
-
-    const categories = getCategories(); 
-
-    select.innerHTML = '<option value="">Select Category</option>';
-
-    categories.forEach(c => {
-        const option = document.createElement('option');
-        option.value = c.name; 
-        option.textContent = c.name;
-        select.appendChild(option);
-    });
+  const select = document.getElementById('productInterest');
+  if (!select) return;
+  const categories = getCategories(); 
+  select.innerHTML = '<option value="">Select Category</option>';
+  categories.forEach(c => {
+    const option = document.createElement('option');
+    option.value = c.name; 
+    option.textContent = c.name;
+    select.appendChild(option);
+  });
 }

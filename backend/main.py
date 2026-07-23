@@ -8,7 +8,7 @@ from routers import products, categories, orders
 from routers import auth as auth_router
 from routers import uploads
 from routers import chat
-
+from routers import stripe_pay
 load_dotenv()
 
 
@@ -39,6 +39,7 @@ app.include_router(products.router, prefix="/api/products", tags=["Products"])
 app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
 app.include_router(uploads.router, prefix="/api/upload", tags=["Uploads"])
 app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
+app.include_router(stripe_pay.router, prefix="/api/stripe", tags=["Stripe Payments"])
 
 
 @app.get("/")
