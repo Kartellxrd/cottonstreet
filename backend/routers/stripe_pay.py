@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
+from typing import Optional
 import stripe
 import os
 from dotenv import load_dotenv
@@ -7,38 +8,57 @@ from dotenv import load_dotenv
 load_dotenv()
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-router = APIRouter(prefix="/api/stripe", tags=["Stripe Payments"])
+router = APIRouter(tags=["Stripe Payments"])
 
-class StripeCheckoutRequest(BaseModel):
-    total_amount: float
+class StripeCheckoutSessionRequest(BaseModel):
+    total_amount: Optional[float] = None
     deposit_amount: float
     customer_name: str
     customer_email: Optional[str] = None
 
 @router.post("/create-checkout-session")
-def create_stripe_checkout(data: StripeCheckoutRequest):
+def create_checkout_session(data: StripeCheckoutSessionRequest, request: Request):
     try:
-        # Stripe expects amounts in the smallest currency unit (e.g., cents/thebe), 
-        # or you can charge in USD/BWP depending on your Stripe account setup. 
-        # Here we convert the deposit amount to integer cents/thebe:
         unit_amount_cents = int(data.deposit_amount * 100)
+        
+        # Dynamically capture the origin of the frontend request (handles Codespaces URLs automatically)
+        frontend_url = request.headers.get("origin") or os.getenv("FRONTEND_URL", "http://localhost:5500")
+        return_url = f"{frontend_url}/order-complete.html?session_id={{CHECKOUT_SESSION_ID}}"
 
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
+        session = stripe.checkout.Session.create(
+            ui_mode='embedded_page',
+            payment_method_types=['card'],
             line_items=[{
-                "price_data": {
-                    "currency": "bwp", # Or "usd" if your Stripe account requires USD
-                    "product_data": {
-                        "name": f"50% Deposit for Cotton Street Order ({data.customer_name})",
+                'price_data': {
+                    'currency': 'bwp',
+                    'product_data': {
+                        'name': f"50% Deposit for Cotton Street Order ({data.customer_name})",
                     },
-                    "unit_amount": unit_amount_cents,
+                    'unit_amount': unit_amount_cents,
                 },
-                "quantity": 1,
+                'quantity': 1,
             }],
-            mode="payment",
-            success_url=os.getenv("FRONTEND_URL", "http://localhost:3000") + "/?success=true&session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=os.getenv("FRONTEND_URL", "http://localhost:3000") + "/?canceled=true",
+            mode='payment',
+            return_url=return_url,
+            metadata={
+                "customer_name": data.customer_name,
+                "customer_email": data.customer_email or ""
+            }
         )
-        return {"url": checkout_session.url}
+        return {"clientSecret": session.client_secret}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/verify-session/{session_id}")
+def verify_session(session_id: str):
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        return {
+            "status": session.payment_status,
+            "customer_name": session.metadata.get("customer_name") or (session.customer_details.name if session.customer_details else "N/A"),
+            "customer_email": session.customer_email or (session.customer_details.email if session.customer_details else "N/A"),
+            "amount_total": session.amount_total / 100,  # Convert back from cents
+            "currency": session.currency.upper()
+        }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

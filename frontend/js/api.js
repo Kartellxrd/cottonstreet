@@ -5,17 +5,15 @@
 const API_BASE = (() => {
   const host = window.location.hostname;
 
-  // 1. Production URL (The URL you just deployed to Render)
-  // If the site is hosted anywhere other than local or a dev codespace, 
-  // it will use your production API.
-  if (host !== 'localhost' && host !== '127.0.0.1' && !host.includes('.app.github.dev')) {
-    return 'https://cottonstreet-3.onrender.com/api';
-  }
-  
-  // 2. Check for Codespace preview links
+  // 1. Check for Codespace preview links (Forces active Codespace backend port 8000)
   if (host.includes('.app.github.dev')) {
     const apiHost = host.replace(/-\d+\.app\.github\.dev$/, '-8000.app.github.dev');
     return `${window.location.protocol}//${apiHost}/api`;
+  }
+  
+  // 2. Production URL (Only use Render if NOT in a local or Codespace environment)
+  if (host !== 'localhost' && host !== '127.0.0.1') {
+    return 'https://cottonstreet-3.onrender.com/api';
   }
   
   // 3. Local environments (Development)
@@ -48,7 +46,7 @@ export async function fetchCategories() {
     return await fetchWithRetry(`${API_BASE}/categories`);
   } catch (err) {
     console.error("❌ Failed to fetch categories after retries:", err);
-    return []; // Return an empty array layout fallback instead of throwing a script breaking crash
+    return []; 
   }
 }
 
@@ -63,7 +61,7 @@ export async function fetchProducts({ inStock = true, category = null } = {}) {
     return await fetchWithRetry(`${API_BASE}/products?${params}`);
   } catch (err) {
     console.error("❌ Failed to fetch products after retries:", err);
-    return []; // Safe array fallback
+    return []; 
   }
 }
 

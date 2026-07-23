@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Order Receipt — Cotton Street</title>
+    <!-- Include html2pdf library for professional client-side PDF downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #0b0b0b;
+            color: #f5f5f5;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        /* The printable receipt card wrapper */
+        .receipt-card {
+            background: #161616;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+        }
+        .brand-header {
+            text-align: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .brand-header h1 {
+            color: #d4af37;
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 3px;
+        }
+        .brand-header p {
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .status-badge {
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .receipt-details {
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 8px;
+        }
+        .row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .row span {
+            color: #fff;
+            font-weight: 500;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            max-width: 480px;
+            width: 100%;
+        }
+        .btn {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            flex: 1;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #e6c547; }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #444;
+        }
+        .btn-outline:hover { background: #222; }
+    </style>
+</head>
+<body>
+
+    <!-- This container is captured and downloaded cleanly as a PDF -->
+    <div class="receipt-card" id="receiptToDownload">
+        <div class="brand-header">
+            <h1>COTTON STREET</h1>
+            <p>Urban Streetwear & Electronics</p>
+        </div>
+
+        <div style="text-align: center;">
+            <div class="status-badge">✓ 50% DEPOSIT SECURED</div>
+        </div>
+
+        <div class="receipt-details">
+            <div class="row">
+                <p>Client Name:</p>
+                <span id="custName">Loading...</span>
+            </div>
+            <div class="row">
+                <p>Email Address:</p>
+                <span id="custEmail">Loading...</span>
+            </div>
+            <div class="row">
+                <p>Deposit Paid:</p>
+                <span id="amountPaid" style="color: #4ade80;">Loading...</span>
+            </div>
+            <div class="row">
+                <p>Payment Gateway:</p>
+                <span>Stripe Secure</span>
+            </div>
+            <div class="row" style="flex-direction: column; gap: 4px; margin-top: 10px;">
+                <p style="font-size: 11px; color: #777;">Transaction Reference:</p>
+                <span id="sessionIdDisplay" style="font-size: 10px; color: #888; word-break: break-all;">Verifying...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons (Excluded from PDF bounds) -->
+    <div class="action-buttons">
+        <button class="btn" onclick="downloadPDF()">Download PDF Receipt</button>
+        <a href="index.html" class="btn btn-outline" onclick="clearCartCompletely()">Store Home</a>
+    </div>
+
+    <script>
+        // Clear local storage bag immediately upon successful order landing
+        function clearCartCompletely() {
+            localStorage.removeItem('cart');
+        }
+        clearCartCompletely();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        async function verifyAndLoadReceipt() {
+            if (!sessionId) {
+                document.getElementById('receiptToDownload').innerHTML = "<p style='color:#ef4444; text-align:center;'>Invalid session parameters.</p>";
+                return;
+            }
+
+            document.getElementById('sessionIdDisplay').innerText = sessionId;
+
+            try {
+                const response = await fetch(`/verify-session/${sessionId}`);
+                if (!response.ok) throw new Error("Verification failed");
+                
+                const data = await response.json();
+                
+                document.getElementById('custName').innerText = data.customer_name || "Valued Customer";
+                document.getElementById('custEmail').innerText = data.customer_email || "Provided via Stripe";
+                document.getElementById('amountPaid').innerText = `${data.amount_total.toFixed(2)} ${data.currency}`;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('custName').innerText = "Cotton Street Buyer";
+                document.getElementById('amountPaid').innerText = "Verified Paid";
+            }
+        }
+
+        // Trigger PDF generation using html2pdf
+        function downloadPDF() {
+            const element = document.getElementById('receiptToDownload');
+            const options = {
+                margin:       10,
+                filename:     `CottonStreet-Receipt-${sessionId.slice(-8)}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#161616' },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(options).save();
+        }
+
+        verifyAndLoadReceipt();
+    </script>
+</body>
+</html>
