@@ -60,6 +60,7 @@ export function getTotal() {
   return _bag.reduce((sum, b) => sum + b.price * b.qty, 0);
 }
 
+
 export function getCount() {
   return _bag.reduce((sum, b) => sum + b.qty, 0);
 }

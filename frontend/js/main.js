@@ -9,8 +9,6 @@ import { initChatbot } from './chatbot.js';
 import { addToCart } from './cart.js';
 import { getProducts, getCategories } from './products.js';
 
-const WHATSAPP_NUMBER = '26776707364';
-
 /* =========================================================
    BOOT
    ========================================================= */
@@ -84,11 +82,12 @@ function initSearch() {
 }
 
 /* =========================================================
-   BAG DRAWER
+   BAG DRAWER & TROLLEY ICON
    ========================================================= */
 
 function initBagDrawer() {
   document.getElementById('bagOverlay')?.addEventListener('click', closeBag);
+  document.getElementById('bagBtn')?.addEventListener('click', toggleBag);
 }
 
 export function toggleBag() {
@@ -103,21 +102,88 @@ function closeBag() {
 
 function renderBag(bag) {
   const count = getCount();
-  document.getElementById('bagCount').textContent = count;
+  const badge = document.getElementById('bagCountBadge');
+  
+  if (badge) {
+    badge.textContent = count;
+    if (count > 0) {
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
 
-  // Deposit Logic (Local calculation)
   const total = getTotal();
   const deposit = total * 0.50;
   const balance = total - deposit;
 
   const itemsEl  = document.getElementById('bagItems');
   const footerEl = document.getElementById('bagFooter');
+  
+  if (!itemsEl || !footerEl) return;
+
+  // Professional mobile-responsive bag item CSS injection
+  if (!document.getElementById('bagItemStyles')) {
+    const bagStyle = document.createElement('style');
+    bagStyle.id = 'bagItemStyles';
+    bagStyle.innerHTML = `
+      .bag-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+      .bag-item img, .bag-item .no-image {
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        max-width: 64px !important;
+        object-fit: cover !important;
+        border-radius: 6px;
+        background: #1a1a1a;
+      }
+      .bag-item-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .bag-item-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .bag-item-variant, .bag-item-price {
+        font-size: 0.8rem;
+        color: #888;
+      }
+      .bag-item-price {
+        color: #d4af37;
+        margin-top: 2px;
+      }
+      .bag-item-remove {
+        background: transparent;
+        border: none;
+        color: #888;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        transition: color 0.2s;
+      }
+      .bag-item-remove:hover {
+        color: #ff4d4d;
+      }
+    `;
+    document.head.appendChild(bagStyle);
+  }
 
   if (!bag.length) {
     itemsEl.innerHTML = `
-      <div class="bag-empty">
-        <div class="big">EMPTY</div>
-        Add items to your bag
+      <div class="bag-empty" style="text-align:center; padding:40px 0; color:#888;">
+        <div class="big" style="font-size:1.2rem; font-weight:bold; color:#fff; margin-bottom:6px;">YOUR BAG IS EMPTY</div>
+        Add items from the store to get started
       </div>`;
     footerEl.style.display = 'none';
     return;
@@ -127,13 +193,13 @@ function renderBag(bag) {
   itemsEl.innerHTML = bag.map(b => {
     const thumb = b.img
       ? `<img src="${esc(b.img)}" alt="${esc(b.name)}">`
-      : `<div class="no-image">${esc(b.name).slice(0, 2).toUpperCase()}</div>`;
+      : `<div class="no-image" style="display:flex; align-items:center; justify-content:center; color:#d4af37; font-weight:bold; font-size:0.8rem;">${esc(b.name).slice(0, 2).toUpperCase()}</div>`;
     return `
     <div class="bag-item">
       ${thumb}
       <div class="bag-item-info">
         <div class="bag-item-name">${esc(b.name)}</div>
-        <div class="bag-item-variant">${esc(b.variant)} · Qty: ${b.qty}</div>
+        <div class="bag-item-variant">${esc(b.variant || 'Standard')} · Qty: ${b.qty}</div>
         <div class="bag-item-price">P${(b.price * b.qty).toLocaleString()}</div>
       </div>
       <button class="bag-item-remove" data-id="${b.id}" aria-label="Remove ${esc(b.name)}">✕</button>
@@ -141,12 +207,12 @@ function renderBag(bag) {
   }).join('');
 
   footerEl.innerHTML = `
-    <div style="padding:10px; font-size:0.9em; border-top:1px solid #eee;">
-      <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span> <span>P${total.toLocaleString()}</span></div>
-      <div style="display:flex; justify-content:space-between; color:#c8a96e; font-weight:bold;"><span>Req. 50% Deposit:</span> <span>P${deposit.toLocaleString()}</span></div>
-      <div style="display:flex; justify-content:space-between;"><span>Balance Due:</span> <span>P${balance.toLocaleString()}</span></div>
+    <div style="padding:12px 0; font-size:0.85rem; border-top:1px solid rgba(255,255,255,0.1); margin-top:10px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span style="color:#888;">Subtotal:</span> <span style="color:#fff;">P${total.toLocaleString()}</span></div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px; color:#d4af37; font-weight:600;"><span>Req. 50% Deposit:</span> <span>P${deposit.toLocaleString()}</span></div>
+      <div style="display:flex; justify-content:space-between;"><span style="color:#888;">Balance Due:</span> <span style="color:#fff;">P${balance.toLocaleString()}</span></div>
     </div>
-    <button class="checkout-btn" onclick="goToCheckout()" style="width:100%; padding:12px; cursor:pointer;">CHECKOUT VIA WHATSAPP</button>
+    <button class="checkout-btn" onclick="goToCheckout()" style="width:100%; padding:12px; cursor:pointer; background:#d4af37; color:#000; border:none; border-radius:6px; font-weight:bold; font-size:0.9rem; margin-top:8px;">PROCEED TO CHECKOUT</button>
   `;
 
   itemsEl.querySelectorAll('.bag-item-remove').forEach(btn => {
@@ -158,7 +224,14 @@ function goToCheckout() {
   const bag = getBag();
   if (!bag.length) { showToast('Your bag is empty!'); return; }
   closeBag();
-  document.getElementById('order')?.scrollIntoView({ behavior: 'smooth' });
+  
+  // Transition trigger point for delivery/pickup modal and system checkout page
+  const orderSection = document.getElementById('order');
+  if (orderSection) {
+    orderSection.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    showToast('Redirecting to checkout flow...');
+  }
 }
 
 window.toggleBag = toggleBag;
@@ -189,26 +262,19 @@ async function submitDirectOrder() {
 
   const bag   = getBag();
   const total = getTotal();
-  const deposit = total * 0.50;
-  const balance = total - deposit;
-  const bagSummary = bag.map(b => `${b.qty}× ${b.name}`).join(', ');
 
-  // WhatsApp Message
-  let msg = `🛒 *NEW ORDER — Cotton Street*\n\n`;
-  msg += `*Customer:* ${fname} ${lname}\n*Phone:* ${phone}\n*Town:* ${town}\n\n`;
-  msg += `*Items:* ${bagSummary}\n\n`;
-  msg += `*Grand Total:* P${total.toLocaleString()}\n`;
-  msg += `⚡ *REQUIRED 50% DEPOSIT:* P${deposit.toLocaleString()}\n`;
-  msg += `🤝 *BALANCE ON DELIVERY:* P${balance.toLocaleString()}\n\n`;
-  if (notes) msg += `*Notes:* ${notes}\n`;
-  msg += `_Sent from the Cotton Street website_`;
+  await submitOrder({ 
+    customer_name: `${fname} ${lname}`, 
+    customer_phone: phone, 
+    customer_town: town, 
+    items_json: bag, 
+    total, 
+    notes 
+  });
 
-  await submitOrder({ customer_name: `${fname} ${lname}`, customer_phone: phone, customer_town: town, items_json: bag, total, notes });
-
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
   clearBag();
   if (submitBtn) submitBtn.disabled = false;
-  showToast('Order sent!');
+  showToast('Order successfully placed!');
 }
 
 /* =========================================================
@@ -230,21 +296,17 @@ function esc(str) {
   );
 }
 
-
 function populateCategories() {
     const select = document.getElementById('productInterest');
     if (!select) return;
 
-    // Get the master list of categories
     const categories = getCategories(); 
 
-    // Clear and reset
     select.innerHTML = '<option value="">Select Category</option>';
 
-    // Add them dynamically
     categories.forEach(c => {
         const option = document.createElement('option');
-        option.value = c.name; // Use the name from the object
+        option.value = c.name; 
         option.textContent = c.name;
         select.appendChild(option);
     });

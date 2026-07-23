@@ -571,3 +571,194 @@ footer { background: #050505; padding: 70px 60px 30px; border-top: 1px solid rgb
   .stat-item { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); }
   .form-row { grid-template-columns: 1fr; }
 }
+.cart-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #d4af37;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.cart-icon-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.trolley-icon {
+  stroke: #d4af37;
+}
+
+.bag-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff3b30;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.bag-badge.hidden {
+  display: none;
+}
+/* =========================================================
+   CHATBOT WIDGET STYLING
+   ========================================================= */
+
+/* Main Chat Container */
+.chatbot-container, 
+#chatbotContainer {
+  background-color: #0d0d0d;
+  color: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  font-family: inherit;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat Header */
+.chatbot-header,
+.chat-header {
+  background: #141414;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-header .icon,
+.chat-avatar {
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbot-header-info h4,
+.chat-title {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chatbot-header-info span,
+.chat-subtitle {
+  color: #888888;
+  font-size: 0.75rem;
+}
+
+/* Close/Action Button */
+.chatbot-close,
+.chat-close-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+.chatbot-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #d4af37;
+}
+
+/* Quick Option Pills (iPhones, Delivery, Clothing, etc.) */
+.chat-pills-wrap,
+.chatbot-quick-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #111111;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chat-pill,
+.chatbot-pill {
+  background: #1a1a1a;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #ffffff;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 20px;
+  cursor: pointer !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.chat-pill:hover {
+  background: #d4af37;
+  color: #000000;
+  border-color: #d4af37;
+}
+
+/* Input Area */
+.chat-input-area,
+.chatbot-input-wrap {
+  padding: 12px;
+  background: #141414;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chat-input-area input,
+.chatbot-input-wrap input {
+  flex: 1;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chat-input-area input:focus,
+.chatbot-input-wrap input:focus {
+  border-color: #d4af37;
+}
+
+.chat-send-btn,
+.chatbot-send-btn {
+  background: #d4af37;
+  color: #000000;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer !important;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.chat-send-btn:hover {
+  opacity: 0.9;
+}

@@ -29,9 +29,9 @@ function generateBotResponse(userMessage) {
     if (phones.length > 0) {
       reply += "Current items in stock:\n" + phones.map(p => `• ${p.name} — P${Number(p.price).toLocaleString()}`).join('\n');
     } else {
-      reply += "Drop us a message on WhatsApp to check our exact live phone inventory and battery health percentages!";
+      reply += "Check out our live catalog above to see all currently available electronics!";
     }
-    return reply + "\n\n💡 *Tip: Tap 'WhatsApp Us' or add a phone to your bag to request pictures!*";
+    return reply + "\n\n💡 *Tip: Add items to your bag and fill out our checkout form to place your order instantly!*";
   }
 
   // 3. SNEAKERS & BRANDS (Nike, Adidas, New Balance, Vans, Converse, Puma, Lacoste)
@@ -46,28 +46,28 @@ function generateBotResponse(userMessage) {
     if (matchingShoes.length > 0) {
       reply += "Available right now:\n" + matchingShoes.slice(0, 5).map(p => `• ${p.name} — P${Number(p.price).toLocaleString()}`).join('\n');
     } else {
-      reply += "Check out our dynamic stock lists above or ask us for your specific size via WhatsApp!";
+      reply += "Check out our dynamic stock lists above to find your exact size and style!";
     }
-    return reply;
+    return reply + "\n\n💡 *Tip: Add items to your bag and fill out our checkout form to place your order instantly!*";
   }
 
   // 4. CLOTHING COLLECTIONS (Winter, Gym, Football, Caps, Bags, Underwear)
   if (msg.match(/(winter|jacket|hoodie|gym|workout|jersey|football|soccer|cap|bag|glove|underwear|clothes|clothing)/)) {
-    return "👕 **Apparel & Collections:** We've got you covered across all seasons! Check out our:\n• ❄️ Winter Collection (Warm hoodies & jackets)\n• ⚽ Football Clothing & Soccer Boots\n• 🏋️‍♂️ Gym & Workout gear\n• 🧢 Accessories: Caps, Bags, Gloves, and Premium Underwear.\n\nScroll through our category tabs right on the homepage to view everything!";
+    return "👕 **Apparel & Collections:** We've got you covered across all seasons! Check out our:\n• ❄️ Winter Collection (Warm hoodies & jackets)\n• ⚽ Football Clothing & Soccer Boots\n• 🏋️‍♂️ Gym & Workout gear\n• 🧢 Accessories: Caps, Bags, Gloves, and Premium Underwear.\n\nScroll through our category tabs right on the homepage to view everything!\n\n💡 *Tip: Add items to your bag and fill out our checkout form to place your order instantly!*";
   }
 
   // 5. DELIVERY & LOCATION
   if (msg.includes('deliver') || msg.includes('ship') || msg.includes('location') || msg.includes('where') || msg.includes('gaborone') || msg.includes('francistown')) {
-    return "🚚 **Delivery Info:**\n• **Gaborone:** Free delivery within 24 hours!\n• **Rest of Botswana:** Quick delivery arranged anywhere across the country.\n• **Payment:** Cash on delivery or immediate EFT. No online card details needed!";
+    return "🚚 **Delivery Info:**\n• **Gaborone:** Free delivery within 24 hours!\n• **Rest of Botswana:** Quick delivery arranged anywhere across the country.\n• **Payment:** Secure order processing directly through our system!";
   }
 
   // 6. HOW TO BUY / ORDER
   if (msg.includes('buy') || msg.includes('order') || msg.includes('price') || msg.includes('how much')) {
-    return "🛍️ **How to Order:**\n1. Add your favorite items and sizes to your shopping bag here on the website.\n2. Open your bag and hit checkout.\n3. Your bag info automatically formats into a WhatsApp message so you can finalize your deal with us instantly!";
+    return "🛍️ **How to Order:**\n1. Add your favorite items and sizes to your shopping bag here on the website.\n2. Open your bag drawer and click checkout.\n3. Fill out your details in our system form to submit your order seamlessly!";
   }
 
   // 7. DEFAULT FALLBACK
-  return "✨ I want to make sure you get exactly what you need! For instant stock confirmation, custom sizing, or to send pictures from our catalog, tap **WhatsApp Us** below — we respond in minutes! 📱";
+  return "✨ I want to make sure you get exactly what you need! Browse our full catalog above or add items straight to your bag to place an order.\n\n💡 *Tip: Add items to your bag and fill out our checkout form to place your order instantly!*";
 }
 
 /* ---- Core Frontend UI Mechanics ---- */
@@ -89,6 +89,7 @@ function esc(str) {
 
 function appendMessage(role, text) {
   const body = document.getElementById('chatBody');
+  if (!body) return;
   const div  = document.createElement('div');
   div.className = `chat-msg chat-${role}`;
   const html = esc(text)
@@ -141,7 +142,7 @@ async function sendMessage() {
     appendMessage('bot', reply);
   } catch (err) {
     setTyping(false);
-    appendMessage('bot', 'Something went wrong. Tap the WhatsApp icon to talk directly with us!');
+    appendMessage('bot', 'Something went wrong. Please try typing your message again!');
   } finally {
     setSendDisabled(false);
     document.getElementById('chatInput')?.focus();
@@ -149,10 +150,29 @@ async function sendMessage() {
 }
 
 export function initChatbot() {
+  // Create chatbot toggle button fixed securely at the bottom right corner
   const bubble = document.createElement('button');
   bubble.id        = 'chatBubble';
   bubble.className = 'chat-bubble';
   bubble.setAttribute('aria-label', 'Open chat assistant');
+  bubble.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    background: #d4af37;
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease, background 0.2s ease;
+  `;
   bubble.innerHTML = `
     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.049 22l4.974-1.355A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.953 7.953 0 01-4.073-1.116l-.292-.174-3.044.83.858-3.006-.19-.31A7.951 7.951 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/>
@@ -160,19 +180,58 @@ export function initChatbot() {
     </svg>`;
   bubble.addEventListener('click', toggleChat);
 
+  // Create chat container panel fixed at bottom right corner above the button
   const panel = document.createElement('div');
   panel.id        = 'chatPanel';
   panel.className = 'chat-panel';
+  panel.style.cssText = `
+    position: fixed;
+    bottom: 92px;
+    right: 24px;
+    width: 360px;
+    max-width: calc(100vw - 48px);
+    height: 480px;
+    max-height: calc(100vh - 120px);
+    background: #0d0d0d;
+    color: #fff;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: inherit;
+  `;
+
+  // Add open class handler support for styles if toggled
+  const styleTag = document.createElement('style');
+  styleTag.innerHTML = `
+    #chatPanel.open { display: flex !important; }
+    .chat-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #111; }
+    .chat-msg { padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; max-width: 85%; line-height: 1.4; }
+    .chat-bot { background: #1a1a1a; color: #fff; border: 1px solid rgba(212,175,55,0.2); align-self: flex-start; }
+    .chat-user { background: #d4af37; color: #000; align-self: flex-end; font-weight: 500; }
+    .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: #141414; border-top: 1px solid rgba(255,255,255,0.06); }
+    .chat-chip { background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); color: #d4af37; padding: 4px 10px; font-size: 0.75rem; border-radius: 16px; cursor: pointer !important; transition: all 0.2s; }
+    .chat-chip:hover { background: #d4af37; color: #000; }
+    .chat-input-row { display: flex; padding: 10px 12px; background: #141414; border-top: 1px solid rgba(255,255,255,0.08); gap: 8px; align-items: center; }
+    .chat-input { flex: 1; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; outline: none; }
+    .chat-input:focus { border-color: #d4af37; }
+    .chat-send { background: #d4af37; color: #000; border: none; width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer !important; }
+  `;
+  document.head.appendChild(styleTag);
+
   panel.innerHTML = `
-    <div class="chat-header">
-      <div class="chat-header-info">
-        <div class="chat-avatar">CS</div>
+    <div class="chat-header" style="background:#141414; padding:12px 16px; border-bottom:1px solid rgba(212,175,55,0.2); display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="background:rgba(212,175,55,0.1); border:1px solid #d4af37; color:#d4af37; width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85rem;">CS</div>
         <div>
-          <div class="chat-title">Cotton Street Assistant</div>
-          <div class="chat-status">Online · Free Support</div>
+          <div style="font-weight:600; font-size:0.9rem; color:#fff;">Cotton Street Assistant</div>
+          <div style="font-size:0.7rem; color:#888;">Online · Free Support</div>
         </div>
       </div>
-      <button class="chat-close" onclick="window.__csChat.toggle()" aria-label="Close chat">✕</button>
+      <button class="chat-close" onclick="window.__csChat.toggle()" aria-label="Close chat" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff; width:28px; height:28px; border-radius:4px; cursor:pointer !important; display:flex; align-items:center; justify-content:center;">✕</button>
     </div>
     <div class="chat-body" id="chatBody">
       <div id="chatTyping" class="chat-typing" style="display:none">
@@ -188,7 +247,7 @@ export function initChatbot() {
       <div class="chat-input-row">
         <input type="text" id="chatInput" class="chat-input" placeholder="Ask me anything…" autocomplete="off" maxlength="400">
         <button id="chatSend" class="chat-send" aria-label="Send">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
       </div>
     </div>`;
