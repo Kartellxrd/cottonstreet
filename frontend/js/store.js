@@ -1,19 +1,19 @@
 /* =========================================================
-   store.js — bag state (persists across page scrolls via sessionStorage)
+   store.js — bag state (persists via localStorage)
    ========================================================= */
 
 const BAG_KEY = 'cs_bag';
 
 function loadBag() {
   try {
-    return JSON.parse(sessionStorage.getItem(BAG_KEY)) || [];
+    return JSON.parse(localStorage.getItem(BAG_KEY)) || [];
   } catch {
     return [];
   }
 }
 
 function saveBag(bag) {
-  sessionStorage.setItem(BAG_KEY, JSON.stringify(bag));
+  localStorage.setItem(BAG_KEY, JSON.stringify(bag));
 }
 
 /* Bag array — each item: { id, name, variant, price, img, qty } */
@@ -59,7 +59,6 @@ export function clearBag() {
 export function getTotal() {
   return _bag.reduce((sum, b) => sum + b.price * b.qty, 0);
 }
-
 
 export function getCount() {
   return _bag.reduce((sum, b) => sum + b.qty, 0);

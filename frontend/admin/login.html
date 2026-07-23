@@ -171,7 +171,7 @@ async function login() {
     if (!res.ok) throw new Error(data.detail || 'Login failed');
     
     localStorage.setItem('cs_token', data.access_token);
-    window.location.href = 'products.html';
+    window.location.href = 'index.html';
   } catch (e) {
     showError(e.message);
     btn.disabled = false;
