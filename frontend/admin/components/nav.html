@@ -1,7 +1,15 @@
-<div class="nav-left" style="display: flex; align-items: center; gap: 16px;">
-  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="background: none; border: none; color: var(--accent); font-size: 20px; cursor: pointer; display: none;">☰</button>
-  <div class="nav-brand">COTTON STREET<span>.ADMIN</span></div>
+<div class="nav-left-group">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+  <div class="nav-brand-group">
+    <span class="nav-location-badge">BW 🇧🇼</span>
+    <span class="nav-title">CONTROL CENTER</span>
+  </div>
 </div>
-<div class="nav-links-top">
-  <button class="btn-logout" onclick="logout()">LOGOUT</button>
+
+<div class="nav-right-group">
+  <div class="live-status-indicator">
+    <span class="pulse-dot"></span>
+    <span class="status-text">NETWORK LIVE</span>
+  </div>
+  <button class="logout-btn" onclick="logout()">LOGOUT</button>
 </div>
