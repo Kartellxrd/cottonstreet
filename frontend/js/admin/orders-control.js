@@ -94,6 +94,7 @@ function renderOrders(list) {
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
           </select>
+          <button onclick="downloadReceipt(${o.id})" class="btn-pdf" style="background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.4); padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 4px; font-family: 'Space Mono', monospace;">PDF Receipt</button>
           <a class="btn-wa" href="https://wa.me/${o.customer_phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank">WhatsApp</a>
         </div>
       </div>
@@ -102,6 +103,37 @@ function renderOrders(list) {
 
   setupBulkCheckboxListeners();
 }
+
+// Secure PDF download handler with auth token support
+window.downloadReceipt = async function(orderId) {
+  try {
+    showToast(`Generating PDF for Order #${orderId}...`);
+    const token = localStorage.getItem('cs_token');
+    
+    const response = await fetch(`${API_BASE}/orders/${orderId}/receipt-pdf`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error('Failed to generate PDF');
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CottonStreet-Receipt-${orderId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+    
+    showToast(`Receipt #${orderId} downloaded successfully!`);
+  } catch (e) {
+    console.error(e);
+    showToast('Failed to download PDF receipt');
+  }
+};
 
 function setupBulkBarUI() {
   let bulkBar = document.getElementById('floating-bulk-bar');

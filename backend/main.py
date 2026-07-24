@@ -47,3 +47,9 @@ app.include_router(receipts.router, prefix="/api/receipts")
 @app.get("/")
 def root():
     return {"message": "Cotton Street API is running 🔥"}
+
+
+@app.get("/health")
+def health_check():
+    """Lightweight health check endpoint to prevent Render cold-start delays."""
+    return {"status": "awake", "service": "Cotton Street API"}

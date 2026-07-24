@@ -22,6 +22,18 @@ const API_BASE = (() => {
 
 export { API_BASE };
 
+/* ----- Silent Background Pinger (Wakes up Render instantly on load) ----- */
+
+function wakeUpBackend() {
+  const rootHealthUrl = API_BASE.replace(/\/api$/, '/health');
+  fetch(rootHealthUrl, { method: 'GET' })
+    .then(res => console.log("⚡ Backend wake-up status:", res.status))
+    .catch(() => console.log("⚡ Wake-up ping sent to server"));
+}
+
+// Fire immediately on script load
+wakeUpBackend();
+
 /* ----- Helper for connection stutters (Race conditions) ----- */
 
 async function fetchWithRetry(url, options = {}, retries = 3, delay = 400) {
