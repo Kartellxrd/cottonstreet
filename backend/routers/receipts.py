@@ -9,7 +9,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
-router = APIRouter(prefix="/api/receipts", tags=["Receipts"])
+# Keep prefix empty here; define it when including the router in main.py
+router = APIRouter(tags=["Receipts"])
 
 class ReceiptItem(BaseModel):
     name: str
@@ -33,7 +34,7 @@ class ReceiptPayload(BaseModel):
 def generate_deposit_receipt_pdf(payload: ReceiptPayload):
     """
     Generates a clean, professional PDF deposit receipt on-the-fly 
-    for users who complete manual payments (e.g., Orange Money).
+    for users who complete manual payments (e.g., Orange Money, FNB).
     """
     try:
         buffer = io.BytesIO()
@@ -75,7 +76,7 @@ def generate_deposit_receipt_pdf(payload: ReceiptPayload):
 
         # Meta Details Table
         meta_data = [
-            [Paragraph(f"<b>Order Reference:</b> #{payload.order_id}", body_style), Paragraph(f"<b>Date:</b> 2026-07-23", body_style)],
+            [Paragraph(f"<b>Order Reference:</b> #{payload.order_id}", body_style), Paragraph(f"<b>Date:</b> 2026-07-24", body_style)],
             [Paragraph(f"<b>Customer:</b> {payload.customer_name}", body_style), Paragraph(f"<b>Phone:</b> {payload.customer_phone}", body_style)],
             [Paragraph(f"<b>Fulfillment:</b> {payload.fulfillment.upper()}", body_style), Paragraph(f"<b>Town:</b> {payload.customer_town}", body_style)]
         ]
@@ -131,7 +132,7 @@ def generate_deposit_receipt_pdf(payload: ReceiptPayload):
 
         # Footer Notice
         notice_text = Paragraph(
-            "<b>Note:</b> This is an official electronic receipt. If paid via Orange Money, please ensure your transaction reference matches this order. Keep this document as your proof of deposit.",
+            f"<b>Note:</b> Paid via <b>{payload.payment_method}</b>. This is an official electronic receipt. Please ensure your transaction reference matches this order. Keep this document as your proof of deposit.",
             body_style
         )
         elements.append(notice_text)
@@ -142,7 +143,7 @@ def generate_deposit_receipt_pdf(payload: ReceiptPayload):
         return Response(
             content=buffer.getvalue(),
             media_type="application/pdf",
-            headers={"Content-Disposition": f"attachment; filename=Receipt-{payload.order_id}.pdf"}
+            headers={"Content-Disposition": f"attachment; filename=CottonStreet-Receipt-{payload.order_id}.pdf"}
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
