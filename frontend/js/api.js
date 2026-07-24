@@ -13,7 +13,7 @@ const API_BASE = (() => {
   
   // 2. Production URL (Only use Render if NOT in a local or Codespace environment)
   if (host !== 'localhost' && host !== '127.0.0.1') {
-    return 'https://cottonstreet-3.onrender.com/api';
+    return 'https://cottonstreet.onrender.com/api';
   }
   
   // 3. Local environments (Development)
